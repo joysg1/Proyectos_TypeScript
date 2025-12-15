@@ -1,0 +1,17 @@
+# Compilar TypeScript
+tsc hola.ts
+
+# Ejecutar el código JavaScript compilado
+node hola.js
+
+# Compilar en modo observador (para desarrollo)
+tsc hola.ts --watch
+
+# Compilar todo el proyecto (si tienes más archivos)
+tsc
+
+# Generar archivos de declaración
+tsc hola.ts --declaration
+
+# Mostrar versión de TypeScript
+tsc --version
