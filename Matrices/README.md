@@ -16,7 +16,7 @@
 
 ## Cómo usar 🚀
 
-    Clona el repositorio y abre index.html
+    Descarga los archivos y abre index.html
 
     Configura las dimensiones de las matrices
 
