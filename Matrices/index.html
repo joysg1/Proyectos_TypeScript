@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador Interactivo de Matrices - TypeScript</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --light-bg: #f8fafc;
+            --light-card: #ffffff;
+            --light-border: #e2e8f0;
+            --text-dark: #f1f5f9;
+            --text-light: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --matrix-a: #3b82f6;
+            --matrix-b: #10b981;
+            --matrix-result: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, var(--light-bg) 0%, #dbeafe 100%);
+            color: var(--text-light);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px 0 40px;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--dark-card);
+            border: 2px solid var(--dark-border);
+            color: var(--text-dark);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .theme-toggle {
+            background: var(--light-card);
+            border-color: var(--light-border);
+            color: var(--text-light);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.5)); }
+            100% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.7)); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .light-mode .subtitle {
+            color: #64748b;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid var(--dark-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-mode .controls-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--light-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-panel h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .matrix-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .config-group {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--dark-border);
+        }
+
+        .light-mode .config-group {
+            background: rgba(248, 250, 252, 0.8);
+            border-color: var(--light-border);
+        }
+
+        .config-group h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .matrix-label {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .matrix-a-label {
+            background: var(--matrix-a);
+            color: white;
+        }
+
+        .matrix-b-label {
+            background: var(--matrix-b);
+            color: white;
+        }
+
+        .matrix-result-label {
+            background: var(--matrix-result);
+            color: white;
+        }
+
+        .dimension-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .dim-input {
+            flex: 1;
+        }
+
+        .dim-input label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .light-mode .dim-input label {
+            color: #475569;
+        }
+
+        .dim-input input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid var(--dark-border);
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--text-dark);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .dim-input input {
+            background: white;
+            border-color: var(--light-border);
+            color: var(--text-light);
+        }
+
+        .dim-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Matrix Display */
+        .matrices-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .matrix-display {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .light-mode .matrix-display {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .matrix-display-a {
+            border-color: var(--matrix-a);
+        }
+
+        .matrix-display-b {
+            border-color: var(--matrix-b);
+        }
+
+        .matrix-display-result {
+            border-color: var(--matrix-result);
+        }
+
+        .matrix-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .matrix-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .matrix-dimensions {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .matrix-grid {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .matrix-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .matrix-cell {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .light-mode .matrix-cell {
+            background: rgba(99, 102, 241, 0.05);
+            border-color: rgba(99, 102, 241, 0.2);
+            color: var(--text-light);
+        }
+
+        .matrix-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+            z-index: 1;
+        }
+
+        .matrix-cell.a-cell {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .matrix-cell.b-cell {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .matrix-cell.result-cell {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+
+        .cell-index {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            opacity: 0.7;
+        }
+
+        /* Operations */
+        .operations-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid var(--dark-border);
+        }
+
+        .light-mode .operations-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--light-border);
+        }
+
+        .operation-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .operation-btn {
+            padding: 18px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .operation-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .operation-btn:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .operation-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .operation-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .operation-btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+        }
+
+        /* Info Panel */
+        .info-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--dark-border);
+        }
+
+        .light-mode .info-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--light-border);
+        }
+
+        .code-block {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent);
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+
+        .light-mode .code-block {
+            background: rgba(241, 245, 249, 0.9);
+        }
+
+        .code-line {
+            padding: 4px 0;
+            line-height: 1.5;
+        }
+
+        .code-comment { color: #64748b; }
+        .code-keyword { color: #f472b6; }
+        .code-type { color: #60a5fa; }
+        .code-function { color: #34d399; }
+        .code-number { color: #fbbf24; }
+        .code-string { color: #a78bfa; }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes highlight {
+            0% { background-color: rgba(6, 182, 212, 0.3); }
+            100% { background-color: transparent; }
+        }
+
+        .highlight-animation {
+            animation: highlight 1.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .matrices-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .matrix-config {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .matrix-cell {
+                width: 60px;
+                height: 60px;
+                font-size: 1.1rem;
+            }
+            
+            .operation-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .theme-toggle {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 0 auto 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <h1><i class="fas fa-border-all"></i> Visualizador de Matrices</h1>
+            <p class="subtitle">Explora matrices bidimensionales interactivas. Manipula dimensiones, realiza operaciones y observa los resultados en tiempo real.</p>
+        </header>
+
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <h2><i class="fas fa-sliders-h"></i> Configuración de Matrices</h2>
+            
+            <div class="matrix-config">
+                <div class="config-group">
+                    <h3><span class="matrix-label matrix-a-label">Matriz A</span></h3>
+                    <div class="dimension-controls">
+                        <div class="dim-input">
+                            <label>Filas:</label>
+                            <input type="number" id="rowsA" min="1" max="6" value="3">
+                        </div>
+                        <div class="dim-input">
+                            <label>Columnas:</label>
+                            <input type="number" id="colsA" min="1" max="6" value="3">
+                        </div>
+                    </div>
+                    <button class="operation-btn" id="randomizeA">
+                        <i class="fas fa-dice"></i> Aleatorizar A
+                    </button>
+                </div>
+                
+                <div class="config-group">
+                    <h3><span class="matrix-label matrix-b-label">Matriz B</span></h3>
+                    <div class="dimension-controls">
+                        <div class="dim-input">
+                            <label>Filas:</label>
+                            <input type="number" id="rowsB" min="1" max="6" value="3">
+                        </div>
+                        <div class="dim-input">
+                            <label>Columnas:</label>
+                            <input type="number" id="colsB" min="1" max="6" value="3">
+                        </div>
+                    </div>
+                    <button class="operation-btn" id="randomizeB">
+                        <i class="fas fa-dice"></i> Aleatorizar B
+                    </button>
+                </div>
+                
+                <div class="config-group">
+                    <h3><i class="fas fa-cogs"></i> Acciones Rápidas</h3>
+                    <div class="operation-buttons" style="grid-template-columns: repeat(2, 1fr);">
+                        <button class="operation-btn" id="resetMatrices">
+                            <i class="fas fa-redo"></i> Reiniciar
+                        </button>
+                        <button class="operation-btn" id="generateIdentities">
+                            <i class="fas fa-square-root-alt"></i> Identidad
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matrix Displays -->
+        <div class="matrices-container">
+            <div class="matrix-display matrix-display-a">
+                <div class="matrix-header">
+                    <div class="matrix-title">Matriz A</div>
+                    <div class="matrix-dimensions" id="dimensionsA">3 × 3</div>
+                </div>
+                <div class="matrix-grid" id="matrixA">
+                    <!-- Matrix cells will be generated here -->
+                </div>
+            </div>
+            
+            <div class="matrix-display matrix-display-b">
+                <div class="matrix-header">
+                    <div class="matrix-title">Matriz B</div>
+                    <div class="matrix-dimensions" id="dimensionsB">3 × 3</div>
+                </div>
+                <div class="matrix-grid" id="matrixB">
+                    <!-- Matrix cells will be generated here -->
+                </div>
+            </div>
+            
+            <div class="matrix-display matrix-display-result">
+                <div class="matrix-header">
+                    <div class="matrix-title">Resultado</div>
+                    <div class="matrix-dimensions" id="dimensionsResult">3 × 3</div>
+                </div>
+                <div class="matrix-grid" id="matrixResult">
+                    <!-- Result matrix cells will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Operations Panel -->
+        <div class="operations-panel">
+            <h2><i class="fas fa-calculator"></i> Operaciones Matriciales</h2>
+            <div class="operation-buttons">
+                <button class="operation-btn" id="addMatrices">
+                    <i class="fas fa-plus"></i> Sumar A + B
+                </button>
+                <button class="operation-btn" id="subtractMatrices">
+                    <i class="fas fa-minus"></i> Restar A - B
+                </button>
+                <button class="operation-btn" id="multiplyMatrices">
+                    <i class="fas fa-times"></i> Multiplicar A × B
+                </button>
+                <button class="operation-btn" id="transposeA">
+                    <i class="fas fa-exchange-alt"></i> Transponer A
+                </button>
+                <button class="operation-btn" id="determinantA">
+                    <i class="fas fa-calculator"></i> Determinante A
+                </button>
+                <button class="operation-btn" id="scaleMatrix">
+                    <i class="fas fa-expand-alt"></i> Escalar Matriz
+                </button>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <h2><i class="fas fa-code"></i> Código TypeScript - Matrices</h2>
+            <div class="code-block">
+                <div class="code-line"><span class="code-comment">// Definición de tipo para matriz 2D</span></div>
+                <div class="code-line"><span class="code-keyword">type</span> <span class="code-type">Matrix</span> = <span class="code-type">number</span>[][];</div>
+                <div class="code-line">&nbsp;</div>
+                <div class="code-line"><span class="code-comment">// Suma de matrices</span></div>
+                <div class="code-line"><span class="code-keyword">function</span> <span class="code-function">addMatrices</span>(a: <span class="code-type">Matrix</span>, b: <span class="code-type">Matrix</span>): <span class="code-type">Matrix</span> {</div>
+                <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">return</span> a.<span class="code-function">map</span>((row, i) =></div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;row.<span class="code-function">map</span>((val, j) => val + b[i][j])</div>
+                <div class="code-line">&nbsp;&nbsp;);</div>
+                <div class="code-line">}</div>
+                <div class="code-line">&nbsp;</div>
+                <div class="code-line"><span class="code-comment">// Multiplicación de matrices</span></div>
+                <div class="code-line"><span class="code-keyword">function</span> <span class="code-function">multiplyMatrices</span>(a: <span class="code-type">Matrix</span>, b: <span class="code-type">Matrix</span>): <span class="code-type">Matrix</span> {</div>
+                <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">const</span> result = <span class="code-keyword">new</span> <span class="code-type">Array</span>(a.length)</div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;.<span class="code-function">fill</span>(<span class="code-number">0</span>)</div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;.<span class="code-function">map</span>(() => <span class="code-keyword">new</span> <span class="code-type">Array</span>(b[<span class="code-number">0</span>].length).<span class="code-function">fill</span>(<span class="code-number">0</span>));</div>
+                <div class="code-line">&nbsp;</div>
+                <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-number">0</span>; i < a.length; i++) {</div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">for</span> (<span class="code-keyword">let</span> j = <span class="code-number">0</span>; j < b[<span class="code-number">0</span>].length; j++) {</div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-keyword">for</span> (<span class="code-keyword">let</span> k = <span class="code-number">0</span>; k < a[<span class="code-number">0</span>].length; k++) {</div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result[i][j] += a[i][k] * b[k][j];</div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                <div class="code-line">&nbsp;&nbsp;}</div>
+                <div class="code-line">&nbsp;&nbsp;<span class="code-keyword">return</span> result;</div>
+                <div class="code-line">}</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="matrices-app.js"></script>
+</body>
+</html>
