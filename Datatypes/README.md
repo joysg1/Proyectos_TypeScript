@@ -20,7 +20,7 @@
 
 ## Cómo usar 🚀
 
-    Clona el repositorio
+    Descarga los archivos
 
     Abre index.html en tu navegador
 
