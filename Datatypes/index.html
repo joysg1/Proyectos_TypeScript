@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Tipos de Datos TypeScript</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --light-bg: #f8fafc;
+            --light-card: #ffffff;
+            --light-border: #e2e8f0;
+            --text-dark: #f1f5f9;
+            --text-light: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, var(--light-bg) 0%, #dbeafe 100%);
+            color: var(--text-light);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px 0 40px;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--dark-card);
+            border: 2px solid var(--dark-border);
+            color: var(--text-dark);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .theme-toggle {
+            background: var(--light-card);
+            border-color: var(--light-border);
+            color: var(--text-light);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.5)); }
+            100% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.7)); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .light-mode .subtitle {
+            color: #64748b;
+        }
+
+        /* Type Cards Grid */
+        .type-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .type-card {
+            background: var(--dark-card);
+            border-radius: var(--radius);
+            padding: 25px;
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .light-mode .type-card {
+            background: var(--light-card);
+        }
+
+        .type-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .type-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .type-card-content {
+            flex: 1;
+        }
+
+        .type-card-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: inherit;
+        }
+
+        .type-card-content p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .light-mode .type-card-content p {
+            color: #64748b;
+        }
+
+        .type-syntax {
+            background: rgba(99, 102, 241, 0.1);
+            color: #60a5fa;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .type-card-arrow {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .type-card:hover .type-card-arrow {
+            transform: translateX(5px);
+            color: var(--primary);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--dark-card);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--dark-border);
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .light-mode .modal-content {
+            background: var(--light-card);
+            border-color: var(--light-border);
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--dark-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: inherit;
+            z-index: 10;
+        }
+
+        .light-mode .modal-header {
+            border-color: var(--light-border);
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8rem;
+        }
+
+        .modal-icon {
+            font-size: 2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .type-info-section {
+            margin-bottom: 30px;
+        }
+
+        .type-info-section h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+
+        .type-description {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 4px solid;
+            padding: 20px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .type-value-display {
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid;
+            border-radius: var(--radius);
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+
+        /* Carousel */
+        .carousel-container {
+            position: relative;
+            margin: 30px 0;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--dark-border);
+        }
+
+        .light-mode .carousel-container {
+            border-color: var(--light-border);
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            padding: 30px;
+            background: rgba(15, 23, 42, 0.5);
+            display: none;
+        }
+
+        .carousel-item.active {
+            display: block;
+        }
+
+        .light-mode .carousel-item {
+            background: rgba(248, 250, 252, 0.8);
+        }
+
+        .carousel-slide-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .carousel-slide-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .carousel-slide-header h3 {
+            font-size: 1.4rem;
+            color: inherit;
+        }
+
+        .carousel-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background: rgba(30, 41, 59, 0.8);
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .light-mode .carousel-controls {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--light-border);
+        }
+
+        .carousel-indicators {
+            display: flex;
+            gap: 10px;
+        }
+
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            background: #475569;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-indicator.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .carousel-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .carousel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Slide Content Styles */
+        .examples-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .code-example {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: var(--radius);
+            border: 1px solid var(--dark-border);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .light-mode .code-example {
+            background: rgba(241, 245, 249, 0.9);
+            border-color: var(--light-border);
+        }
+
+        .code-example pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .code-example code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .light-mode .code-example code {
+            color: #1e293b;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .use-cases-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .use-case-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--success);
+        }
+
+        .use-case-item i {
+            color: var(--success);
+        }
+
+        .best-practices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .practice-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--warning);
+        }
+
+        .practice-number {
+            width: 32px;
+            height: 32px;
+            background: var(--warning);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .practice-text {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .syntax-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .syntax-example {
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .syntax-header {
+            background: rgba(139, 92, 246, 0.2);
+            padding: 12px 20px;
+            font-weight: bold;
+            color: #8b5cf6;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .syntax-example pre {
+            margin: 0;
+            padding: 20px;
+        }
+
+        .syntax-example code {
+            font-family: 'Fira Code', monospace;
+            color: #e2e8f0;
+        }
+
+        .light-mode .syntax-example code {
+            color: #1e293b;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .action-btn.btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            color: #94a3b8;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .light-mode footer {
+            color: #64748b;
+            border-color: var(--light-border);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .type-cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .modal-content {
+                max-width: 95%;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .type-cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .modal-title {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .carousel-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .theme-toggle {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 0 auto 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .carousel-item {
+                padding: 20px;
+            }
+            
+            .syntax-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <h1><i class="fas fa-code"></i> Tipos de Datos TypeScript</h1>
+            <p class="subtitle">Explora y aprende sobre los diferentes tipos de datos en TypeScript con ejemplos interactivos, mejores prácticas y casos de uso reales.</p>
+        </header>
+
+        <!-- Grid de Tarjetas de Tipos -->
+        <div class="type-cards-grid" id="typeCards">
+            <!-- Las tarjetas se generan dinámicamente -->
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Visualizador de Tipos de Datos TypeScript &copy; 2024</p>
+            <p>Haz clic en cualquier tipo para ver detalles completos</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Detalles del Tipo -->
+    <div class="modal" id="typeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas" id="modalTypeIcon"></i>
+                    <h2 id="modalTypeName">Number</h2>
+                </div>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Descripción del Tipo -->
+                <div class="type-info-section">
+                    <h3><i class="fas fa-info-circle"></i> Descripción</h3>
+                    <div class="type-description" id="typeDescription">
+                        <!-- Descripción se inserta aquí -->
+                    </div>
+                </div>
+
+                <!-- Carrusel de Información -->
+                <div class="carousel-container">
+                    <div class="carousel-inner" id="carouselInner">
+                        <!-- Slides se generan dinámicamente -->
+                    </div>
+                    
+                    <div class="carousel-controls">
+                        <button class="carousel-btn" id="prevSlide">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        <div class="carousel-indicators" id="carouselIndicators">
+                            <!-- Indicadores se generan dinámicamente -->
+                        </div>
+                        
+                        <button class="carousel-btn" id="nextSlide">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Valor de Ejemplo -->
+                <div class="type-info-section">
+                    <h3><i class="fas fa-eye"></i> Valor de Ejemplo</h3>
+                    <div class="type-value-display" id="typeValue">
+                        <!-- Valor se inserta aquí -->
+                    </div>
+                </div>
+
+                <!-- Sintaxis -->
+                <div class="type-info-section">
+                    <h3><i class="fas fa-terminal"></i> Sintaxis</h3>
+                    <div class="type-value-display" id="typeSyntax">
+                        <!-- Sintaxis se inserta aquí -->
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="action-buttons">
+                    <button class="action-btn" id="copyExample">
+                        <i class="fas fa-copy"></i> Copiar Ejemplo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="datatypes-app.js"></script>
+</body>
+</html>
