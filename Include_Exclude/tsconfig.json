@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "lib": ["es2015", "dom", "es2016.array.include"],
+    "outDir": "./",
+    "rootDir": "./",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
+    "removeComments": false,
+    "noEmitOnError": false,
+    "preserveWatchOutput": true,
+    "moduleResolution": "node"
+  },
+  "include": ["include-exclude-config.ts"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+}

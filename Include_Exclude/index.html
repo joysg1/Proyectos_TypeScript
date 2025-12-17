@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Include/Exclude Patterns</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-meta">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="header-badge">
+                        <i class="fas fa-code"></i> TypeScript
+                    </div>
+                </div>
+                
+                <div class="header-main">
+                    <h1 class="header-title">
+                        <span class="title-gradient">Include/Exclude</span>
+                        Configuration Patterns
+                    </h1>
+                    <p class="header-subtitle">
+                        Professional patterns for optimizing TypeScript compilation. 
+                        Learn best practices for file inclusion and exclusion in complex projects.
+                    </p>
+                </div>
+
+                <div class="header-stats">
+                    <div class="stat">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">Configuration Types</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">50+</div>
+                        <div class="stat-label">Pattern Examples</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">10x</div>
+                        <div class="stat-label">Performance Gain</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search configurations, patterns, or use cases..."
+                    autocomplete="off"
+                >
+                <div class="search-hint">
+                    <i class="fas fa-info-circle"></i>
+                    Press <kbd>Ctrl</kbd> + <kbd>F</kbd> to search
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Cards Grid -->
+            <div class="cards-grid" id="configCards">
+                <!-- Cards will be generated dynamically -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state hidden" id="noResults">
+                <div class="empty-state-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="empty-state-title">No results found</h3>
+                <p class="empty-state-description">
+                    Try different keywords or browse all configurations
+                </p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <i class="fas fa-filter"></i>
+                        <span>TS Config</span>
+                    </div>
+                    <p class="footer-description">
+                        Professional TypeScript configuration patterns for modern development workflows.
+                    </p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#" class="footer-link">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                    <a href="#" class="footer-link">
+                        <i class="fas fa-book"></i> Docs
+                    </a>
+                    <a href="#" class="footer-link">
+                        <i class="fas fa-code"></i> Examples
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-copyright">
+                <p>© 2024 TypeScript Configuration Patterns. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!-- Quick Navigation -->
+        <nav class="quick-nav">
+            <div class="quick-nav-header">
+                <i class="fas fa-bolt"></i>
+                <span>Quick Nav</span>
+            </div>
+            <div class="quick-nav-buttons">
+                <button class="quick-nav-btn" data-type="include-basic">
+                    <i class="fas fa-cube"></i>
+                    <span>Basic</span>
+                </button>
+                <button class="quick-nav-btn" data-type="glob-patterns">
+                    <i class="fas fa-globe"></i>
+                    <span>Glob</span>
+                </button>
+                <button class="quick-nav-btn" data-type="monorepo-config">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Monorepo</span>
+                </button>
+                <button class="quick-nav-btn" data-type="test-configuration">
+                    <i class="fas fa-vial"></i>
+                    <span>Test</span>
+                </button>
+                <button class="quick-nav-btn" data-type="build-config">
+                    <i class="fas fa-hammer"></i>
+                    <span>Build</span>
+                </button>
+                <button class="quick-nav-btn" data-type="advanced-patterns">
+                    <i class="fas fa-magic"></i>
+                    <span>Advanced</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="configModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-header-content">
+                    <div class="modal-icon" id="modalTitleIcon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="modal-title-group">
+                        <h2 class="modal-title" id="modalTitle">Configuration Title</h2>
+                        <p class="modal-subtitle" id="modalSubtitle">Configuration subtitle</p>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeModal" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-tabs" id="modalTabs">
+                <!-- Tabs will be generated dynamically -->
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                <!-- Tab content will be generated dynamically -->
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="copyConfig">
+                    <i class="fas fa-copy"></i>
+                    <span>Copy Configuration</span>
+                </button>
+                <div class="modal-shortcuts">
+                    <kbd>←</kbd> <kbd>→</kbd> Navigate • <kbd>Esc</kbd> Close
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <script src="include-exclude-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+</body>
+</html>
