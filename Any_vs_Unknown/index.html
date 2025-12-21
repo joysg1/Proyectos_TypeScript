@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeSafeLab - Any y Unknown en TypeScript</title>
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ts-dark': '#0a0a12',
+                        'ts-secondary': '#121220',
+                        'ts-accent': '#3178c6',
+                        'ts-accent-light': '#4d93f0',
+                        'ts-accent-dark': '#235a97',
+                        'ts-gradient': 'linear-gradient(135deg, #3178c6 0%, #235a97 100%)',
+                        'ts-accent-secondary': '#ff6b6b',
+                        'ts-accent-secondary-light': '#ff8787',
+                        'ts-secondary-gradient': 'linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%)',
+                        'ts-accent-tertiary': '#ffd93d',
+                        'ts-accent-tertiary-light': '#ffed4e',
+                        'text-primary': '#f8fafc',
+                        'text-secondary': '#cbd5e1',
+                        'text-muted': '#94a3b8',
+                        'success': '#10b981',
+                        'warning': '#f59e0b',
+                        'danger': '#ef4444',
+                        'info': '#3b82f6',
+                        'border': '#334155',
+                        'border-light': '#475569',
+                        'card-bg': 'rgba(18, 18, 32, 0.9)',
+                        'card-bg-solid': '#1e1b4b',
+                        'glass-bg': 'rgba(10, 10, 18, 0.95)',
+                        'shadow': 'rgba(0, 0, 0, 0.6)',
+                        'shadow-accent': 'rgba(49, 120, 198, 0.3)',
+                        'shadow-secondary': 'rgba(255, 107, 107, 0.3)',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'jetbrains': ['JetBrains Mono', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'ts-pulse': 'ts-pulse 3s ease-in-out infinite',
+                        'data-flow': 'data-flow 3s linear infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                        'slide-in': 'slideIn 0.8s ease-out forwards',
+                        'type-rotate': 'typeRotate 20s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-ts-dark text-text-primary font-inter min-h-screen overflow-x-hidden">
+    <!-- Canvas para partículas de TypeScript -->
+    <canvas id="particles-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
+
+    <!-- Header -->
+    <header class="relative bg-glass-bg backdrop-blur-xl border-b border-border py-12 md:py-16 px-4 mb-12 shadow-2xl overflow-hidden z-10">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-ts-accent to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-ts-accent-secondary to-transparent opacity-50"></div>
+        
+        <div class="container mx-auto max-w-6xl px-4">
+            <div class="text-center relative z-10">
+                <div class="text-ts-accent text-4xl md:text-5xl mb-4 animate-pulse-glow">
+                    <ion-icon name="code-slash"></ion-icon>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-4 bg-gradient-to-r from-ts-accent-light to-ts-accent-tertiary-light bg-clip-text text-transparent">
+                    TypeSafeLab
+                </h1>
+                <p class="text-xl md:text-2xl text-text-secondary max-w-4xl mx-auto mb-8 leading-relaxed">
+                    Any vs Unknown en TypeScript: Tipos de Escape y Seguridad de Tipos
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="inline-flex items-center gap-2 px-6 py-3 bg-ts-accent/10 border border-ts-accent/40 rounded-full text-ts-accent-light font-semibold backdrop-blur-sm shadow-lg shadow-ts-accent/10 animate-ts-pulse">
+                        <ion-icon name="shield-outline"></ion-icon>
+                        Type Safety: La clave para código mantenible y confiable
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-6 py-3 bg-ts-accent-secondary/10 border border-ts-accent-secondary/40 rounded-full text-ts-accent-secondary-light font-semibold backdrop-blur-sm shadow-lg shadow-ts-accent-secondary/10">
+                        <ion-icon name="warning-outline"></ion-icon>
+                        Any: El escape dinámico vs Unknown: La seguridad controlada
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-6xl px-4 mb-16 relative z-10">
+        <!-- Sección principal de tarjetas -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <!-- Tarjeta 1: ¿Qué es Any? -->
+            <div class="bg-card-bg backdrop-blur-xl border border-border rounded-2xl p-6 md:p-8 shadow-2xl transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-ts-accent/30 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-ts-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="flex items-center mb-6 pb-6 border-b border-border-light">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-ts-accent to-ts-accent-dark flex items-center justify-center mr-4 md:mr-6 shadow-xl shadow-ts-accent/30">
+                        <ion-icon name="warning" class="text-2xl md:text-3xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Tipo Any: El Escape Dinámico</h2>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-text-secondary leading-relaxed">
+                        <span class="text-ts-accent-light font-bold">Any</span> es el tipo de escape de TypeScript que permite que una variable tenga cualquier tipo de valor. Desactiva la verificación de tipos, permitiendo que el código se comporte como JavaScript puro.
+                    </p>
+                    <p class="text-text-secondary leading-relaxed">
+                        Fue introducido en TypeScript 1.0 como una forma de migrar gradualmente código JavaScript. Representa una <span class="highlight">renuncia a la seguridad de tipos</span>, útil para interacción con APIs dinámicas pero peligrosa si se usa en exceso.
+                    </p>
+                    
+                    <div class="bg-gray-900/70 border-l-4 border-ts-accent rounded-r-lg p-4 mt-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <ion-icon name="alert-circle-outline" class="text-ts-accent-light"></ion-icon>
+                            <h4 class="font-bold text-ts-accent-light">Características Clave</h4>
+                        </div>
+                        <ul class="space-y-2 text-text-secondary">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Desactiva completamente la verificación de tipos</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Permite cualquier operación sin errores de compilación</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Útil para migración gradual de JavaScript</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Considerado un "anti-patrón" en código TypeScript moderno</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 p-4 rounded-lg font-jetbrains text-sm mt-4">
+                        <div class="text-ts-accent-light">// Ejemplo de uso de any</div>
+                        <div class="text-text-secondary mt-1">let dynamicValue: any = "hello";</div>
+                        <div class="text-text-secondary">dynamicValue = 42; // ✓ Sin error</div>
+                        <div class="text-text-secondary">dynamicValue.toUpperCase(); // ✓ Sin error (pero fallará en runtime)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: ¿Qué es Unknown? -->
+            <div class="bg-card-bg backdrop-blur-xl border border-ts-accent-secondary/30 rounded-2xl p-6 md:p-8 shadow-2xl transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-ts-accent-secondary/30 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-ts-accent-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="flex items-center mb-6 pb-6 border-b border-border-light">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-ts-accent-secondary to-red-700 flex items-center justify-center mr-4 md:mr-6 shadow-xl shadow-ts-accent-secondary/30">
+                        <ion-icon name="shield-checkmark" class="text-2xl md:text-3xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Tipo Unknown: Seguridad Controlada</h2>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-text-secondary leading-relaxed">
+                        <span class="text-ts-accent-secondary-light font-bold">Unknown</span> fue introducido en TypeScript 3.0 como una alternativa segura a <code>any</code>. Representa un valor del cual no sabemos su tipo, pero requiere verificación explícita antes de su uso.
+                    </p>
+                    <p class="text-text-secondary leading-relaxed">
+                        A diferencia de <code>any</code>, <code>unknown</code> mantiene la seguridad de tipos. No se puede acceder a propiedades ni llamar métodos sin antes realizar una verificación de tipo o aserción.
+                    </p>
+                    
+                    <div class="bg-gray-900/70 border-l-4 border-ts-accent-secondary rounded-r-lg p-4 mt-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <ion-icon name="checkmark-circle-outline" class="text-ts-accent-secondary-light"></ion-icon>
+                            <h4 class="font-bold text-ts-accent-secondary-light">Características Clave</h4>
+                        </div>
+                        <ul class="space-y-2 text-text-secondary">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Requiere verificación de tipo explícita</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Mantiene la seguridad de tipos del sistema</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Ideal para valores de entrada desconocidos</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Promueve código más seguro y mantenible</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 p-4 rounded-lg font-jetbrains text-sm mt-4">
+                        <div class="text-ts-accent-secondary-light">// Ejemplo de uso de unknown</div>
+                        <div class="text-text-secondary mt-1">let uncertainValue: unknown = "hello";</div>
+                        <div class="text-text-secondary">uncertainValue = 42; // ✓ Sin error</div>
+                        <div class="text-red-400">uncertainValue.toUpperCase(); // ✗ Error: Object is of type 'unknown'</div>
+                        <div class="text-green-400">if (typeof uncertainValue === "string") {</div>
+                        <div class="text-green-400 ml-4">console.log(uncertainValue.toUpperCase()); // ✓ Seguro</div>
+                        <div class="text-green-400">}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparación Detallada -->
+        <section class="mb-16">
+            <div class="bg-card-bg backdrop-blur-xl border border-border rounded-2xl p-6 md:p-8 shadow-2xl">
+                <div class="flex items-center mb-8">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-ts-accent to-ts-accent-dark flex items-center justify-center mr-6 shadow-xl shadow-ts-accent/30">
+                        <ion-icon name="scale-outline" class="text-2xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Comparación Any vs Unknown</h2>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-text-secondary">
+                        <thead class="text-xs uppercase bg-gray-900/50">
+                            <tr>
+                                <th class="px-6 py-3 text-ts-accent-light">Característica</th>
+                                <th class="px-6 py-3 text-ts-accent-light">Tipo Any</th>
+                                <th class="px-6 py-3 text-ts-accent-light">Tipo Unknown</th>
+                                <th class="px-6 py-3 text-ts-accent-light">Recomendación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-border-light hover:bg-gray-900/30">
+                                <td class="px-6 py-4 font-medium">Verificación de tipos</td>
+                                <td class="px-6 py-4 text-red-400">Desactivada</td>
+                                <td class="px-6 py-4 text-green-400">Activada (requiere verificación)</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-green-900/30 text-green-400 rounded text-xs">Usa Unknown</span>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-border-light hover:bg-gray-900/30">
+                                <td class="px-6 py-4 font-medium">Acceso a propiedades</td>
+                                <td class="px-6 py-4 text-red-400">Permitido sin restricciones</td>
+                                <td class="px-6 py-4 text-green-400">Requiere type narrowing</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-green-900/30 text-green-400 rounded text-xs">Usa Unknown</span>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-border-light hover:bg-gray-900/30">
+                                <td class="px-6 py-4 font-medium">Uso en funciones genéricas</td>
+                                <td class="px-6 py-4 text-amber-400">Amplia compatibilidad</td>
+                                <td class="px-6 py-4 text-amber-400">Compatibilidad limitada</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-amber-900/30 text-amber-400 rounded text-xs">Contextual</span>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-border-light hover:bg-gray-900/30">
+                                <td class="px-6 py-4 font-medium">Migración de JavaScript</td>
+                                <td class="px-6 py-4 text-green-400">Ideal para migración gradual</td>
+                                <td class="px-6 py-4 text-amber-400">Requiere más refactorización</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-blue-900/30 text-blue-400 rounded text-xs">Usa Any temporalmente</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-900/30">
+                                <td class="px-6 py-4 font-medium">Seguridad en runtime</td>
+                                <td class="px-6 py-4 text-red-400">Baja (errores en runtime)</td>
+                                <td class="px-6 py-4 text-green-400">Alta (errores en compilación)</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 bg-green-900/30 text-green-400 rounded text-xs">Usa Unknown</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <div class="bg-gradient-to-br from-ts-accent/10 to-transparent border border-ts-accent/30 rounded-xl p-5">
+                        <h3 class="font-bold text-lg mb-3 text-ts-accent-light">Cuándo usar Any</h3>
+                        <ul class="space-y-2 text-sm text-text-secondary">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="checkmark-circle" class="text-ts-accent mt-1"></ion-icon>
+                                <span>Migración de código JavaScript existente</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="checkmark-circle" class="text-ts-accent mt-1"></ion-icon>
+                                <span>Interacción con APIs dinámicas externas</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="checkmark-circle" class="text-ts-accent mt-1"></ion-icon>
+                                <span>Prototipado rápido sin preocuparse por tipos</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-ts-accent-secondary/10 to-transparent border border-ts-accent-secondary/30 rounded-xl p-5">
+                        <h3 class="font-bold text-lg mb-3 text-ts-accent-secondary-light">Cuándo usar Unknown</h3>
+                        <ul class="space-y-2 text-sm text-text-secondary">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="checkmark-circle" class="text-ts-accent-secondary mt-1"></ion-icon>
+                                <span>Valores de entrada desconocidos (APIs, user input)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="checkmark-circle" class="text-ts-accent-secondary mt-1"></ion-icon>
+                                <span>Implementación de funciones de utilidad genéricas</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="checkmark-circle" class="text-ts-accent-secondary mt-1"></ion-icon>
+                                <span>Cualquier caso donde antes se usaba any</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-ts-accent-tertiary/10 to-transparent border border-ts-accent-tertiary/30 rounded-xl p-5">
+                        <h3 class="font-bold text-lg mb-3 text-ts-accent-tertiary-light">Mejores Prácticas</h3>
+                        <ul class="space-y-2 text-sm text-text-secondary">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="star" class="text-ts-accent-tertiary mt-1"></ion-icon>
+                                <span>Evita any en código TypeScript nuevo</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="star" class="text-ts-accent-tertiary mt-1"></ion-icon>
+                                <span>Usa unknown como tipo por defecto para valores dinámicos</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="star" class="text-ts-accent-tertiary mt-1"></ion-icon>
+                                <span>Configura tsconfig.json con noImplicitAny y strict</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline de Evolución -->
+        <section class="mb-16">
+            <div class="bg-card-bg backdrop-blur-xl border border-border rounded-2xl p-6 md:p-8 shadow-2xl">
+                <div class="flex items-center mb-8">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-ts-accent to-ts-accent-dark flex items-center justify-center mr-6 shadow-xl shadow-ts-accent/30">
+                        <ion-icon name="time-outline" class="text-2xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Evolución en TypeScript</h2>
+                </div>
+                
+                <div class="relative timeline-container">
+                    <div class="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-ts-accent to-transparent opacity-60"></div>
+                    
+                    <div class="space-y-16">
+                        <!-- Item 1 -->
+                        <div class="relative timeline-item">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                                <div class="md:w-1/2 md:text-right md:pr-12 order-2 md:order-1">
+                                    <div class="inline-block px-4 py-2 bg-ts-accent/15 border border-ts-accent/40 rounded-full text-ts-accent-light font-bold mb-3 text-sm min-w-[120px]">
+                                        2012
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-2">TypeScript 0.8 - Nacimiento</h3>
+                                    <p class="text-text-secondary text-sm md:text-base">Microsoft lanza TypeScript con sistema de tipos estáticos sobre JavaScript. El tipo <code>any</code> existe desde el inicio para compatibilidad.</p>
+                                </div>
+                                <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-ts-accent to-ts-accent-dark flex items-center justify-center z-10 shadow-lg shadow-ts-accent/50 order-1 md:order-2">
+                                    <div class="w-5 h-5 rounded-full bg-white"></div>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12 order-3"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Item 2 -->
+                        <div class="relative timeline-item">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                                <div class="md:w-1/2 md:pr-12 order-2"></div>
+                                <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-ts-accent-secondary to-red-700 flex items-center justify-center z-10 shadow-lg shadow-ts-accent-secondary/50 order-1">
+                                    <div class="w-5 h-5 rounded-full bg-white"></div>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12 order-3">
+                                    <div class="inline-block px-4 py-2 bg-ts-accent-secondary/15 border border-ts-accent-secondary/40 rounded-full text-ts-accent-secondary-light font-bold mb-3 text-sm min-w-[120px]">
+                                        2018
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-2">TypeScript 3.0 - Unknown</h3>
+                                    <p class="text-text-secondary text-sm md:text-base">Introducción del tipo <code>unknown</code> como alternativa segura a <code>any</code>. Marcó un cambio hacia mayor seguridad de tipos.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Item 3 -->
+                        <div class="relative timeline-item">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                                <div class="md:w-1/2 md:text-right md:pr-12 order-2 md:order-1">
+                                    <div class="inline-block px-4 py-2 bg-purple-500/15 border border-purple-500/40 rounded-full text-purple-300 font-bold mb-3 text-sm min-w-[120px]">
+                                        2019
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-2">TypeScript 3.5 - Optimizaciones</h3>
+                                    <p class="text-text-secondary text-sm md:text-base">Mejoras en el type narrowing para <code>unknown</code> y advertencias más estrictas sobre uso de <code>any</code>.</p>
+                                </div>
+                                <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center z-10 shadow-lg shadow-purple-500/50 order-1 md:order-2">
+                                    <div class="w-5 h-5 rounded-full bg-white"></div>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12 order-3"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Item 4 -->
+                        <div class="relative timeline-item">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                                <div class="md:w-1/2 md:pr-12 order-2"></div>
+                                <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-ts-accent-tertiary to-amber-700 flex items-center justify-center z-10 shadow-lg shadow-ts-accent-tertiary/50 order-1">
+                                    <div class="w-5 h-5 rounded-full bg-white"></div>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12 order-3">
+                                    <div class="inline-block px-4 py-2 bg-ts-accent-tertiary/15 border border-ts-accent-tertiary/40 rounded-full text-ts-accent-tertiary-light font-bold mb-3 text-sm min-w-[120px]">
+                                        2022
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-2">TypeScript 4.9 - satisfies</h3>
+                                    <p class="text-text-secondary text-sm md:text-base">Operador <code>satisfies</code> para mejor manejo de tipos parcialmente conocidos, complementando <code>unknown</code>.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Item 5 -->
+                        <div class="relative timeline-item">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+                                <div class="md:w-1/2 md:text-right md:pr-12 order-2 md:order-1">
+                                    <div class="inline-block px-4 py-2 bg-pink-500/15 border border-pink-500/40 rounded-full text-pink-300 font-bold mb-3 text-sm min-w-[140px]">
+                                        2024-Presente
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-2">Énfasis en Type Safety</h3>
+                                    <p class="text-text-secondary text-sm md:text-base">Configuraciones estrictas por defecto, mejores herramientas para reemplazar <code>any</code> con tipos específicos.</p>
+                                </div>
+                                <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-700 flex items-center justify-center z-10 shadow-lg shadow-pink-500/50 order-1 md:order-2">
+                                    <div class="w-5 h-5 rounded-full bg-white"></div>
+                                </div>
+                                <div class="md:w-1/2 md:pl-12 order-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Ecosistema -->
+        <section class="mb-16">
+            <div class="bg-card-bg backdrop-blur-xl border border-border rounded-2xl p-6 md:p-8 shadow-2xl">
+                <div class="flex items-center mb-8">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-ts-accent to-ts-accent-dark flex items-center justify-center mr-6 shadow-xl shadow-ts-accent/30">
+                        <ion-icon name="settings-outline" class="text-2xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Configuraciones y Herramientas</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-gray-900/50 border border-border-light rounded-xl p-5 transition-all duration-300 hover:-translate-y-2 hover:border-ts-accent hover:shadow-xl hover:shadow-ts-accent/20">
+                        <div class="text-3xl mb-4 text-ts-accent">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">tsconfig.json</h3>
+                        <p class="text-sm text-text-secondary mb-3">Configuraciones críticas para manejo de any/unknown.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-ts-accent/15 text-ts-accent-light text-xs rounded">noImplicitAny</span>
+                            <span class="px-2 py-1 bg-ts-accent/15 text-ts-accent-light text-xs rounded">strict</span>
+                            <span class="px-2 py-1 bg-ts-accent/15 text-ts-accent-light text-xs rounded">noUncheckedIndexedAccess</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 border border-border-light rounded-xl p-5 transition-all duration-300 hover:-translate-y-2 hover:border-ts-accent-secondary hover:shadow-xl hover:shadow-ts-accent-secondary/20">
+                        <div class="text-3xl mb-4 text-ts-accent-secondary">
+                            <ion-icon name="search-outline"></ion-icon>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">ESLint Rules</h3>
+                        <p class="text-sm text-text-secondary mb-3">Reglas para prevenir uso de any.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-ts-accent-secondary/15 text-ts-accent-secondary-light text-xs rounded">@typescript-eslint/no-explicit-any</span>
+                            <span class="px-2 py-1 bg-ts-accent-secondary/15 text-ts-accent-secondary-light text-xs rounded">@typescript-eslint/no-unsafe-assignment</span>
+                            <span class="px-2 py-1 bg-ts-accent-secondary/15 text-ts-accent-secondary-light text-xs rounded">@typescript-eslint/no-unsafe-call</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 border border-border-light rounded-xl p-5 transition-all duration-300 hover:-translate-y-2 hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/20">
+                        <div class="text-3xl mb-4 text-purple-400">
+                            <ion-icon name="construct-outline"></ion-icon>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Type Utilities</h3>
+                        <p class="text-sm text-text-secondary mb-3">Utilidades para trabajar con tipos.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-purple-500/15 text-purple-300 text-xs rounded">Type Guards</span>
+                            <span class="px-2 py-1 bg-purple-500/15 text-purple-300 text-xs rounded">Type Assertions</span>
+                            <span class="px-2 py-1 bg-purple-500/15 text-purple-300 text-xs rounded">Conditional Types</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 border border-border-light rounded-xl p-5 transition-all duration-300 hover:-translate-y-2 hover:border-ts-accent-tertiary hover:shadow-xl hover:shadow-ts-accent-tertiary/20">
+                        <div class="text-3xl mb-4 text-ts-accent-tertiary">
+                            <ion-icon name="stats-chart-outline"></ion-icon>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Métricas</h3>
+                        <p class="text-sm text-text-secondary mb-3">Herramientas de análisis de código.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-ts-accent-tertiary/15 text-ts-accent-tertiary-light text-xs rounded">Type Coverage</span>
+                            <span class="px-2 py-1 bg-ts-accent-tertiary/15 text-ts-accent-tertiary-light text-xs rounded">Any Usage Reports</span>
+                            <span class="px-2 py-1 bg-ts-accent-tertiary/15 text-ts-accent-tertiary-light text-xs rounded">Code Quality</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Barras de progreso -->
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-text-secondary">Proyectos con noImplicitAny (2024)</span>
+                            <span class="font-bold text-ts-accent-light">68% de proyectos</span>
+                        </div>
+                        <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-ts-accent to-ts-accent-dark rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-text-secondary">Reducción de any con unknown</span>
+                            <span class="font-bold text-ts-accent-secondary-light">42% menos errores runtime</span>
+                        </div>
+                        <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-ts-accent-secondary to-red-700 rounded-full" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Simulación Interactiva -->
+        <section class="mb-16">
+            <div class="bg-card-bg backdrop-blur-xl border border-ts-accent-secondary/30 rounded-2xl p-6 md:p-8 shadow-2xl">
+                <div class="flex items-center mb-8">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-ts-accent-secondary to-red-700 flex items-center justify-center mr-6 shadow-xl shadow-ts-accent-secondary/30">
+                        <ion-icon name="code-working-outline" class="text-2xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Simulador de Type Safety</h2>
+                </div>
+                
+                <div id="simulationContainer" class="space-y-6">
+                    <div class="bg-gray-900/40 border border-border rounded-xl p-6">
+                        <div class="flex items-center gap-2 mb-4">
+                            <ion-icon name="shield-checkmark-outline" class="text-ts-accent-light"></ion-icon>
+                            <h3 class="text-xl font-bold text-ts-accent-light">Simulador: Any vs Unknown en Acción</h3>
+                        </div>
+                        <p class="text-text-secondary mb-6">Compara el comportamiento y seguridad de diferentes enfoques de tipado:</p>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Controles -->
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-text-secondary mb-2">Seleccionar Enfoque:</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button class="material-btn active" data-material="any">
+                                            <ion-icon name="warning" class="mr-2"></ion-icon> Any
+                                        </button>
+                                        <button class="material-btn" data-material="unknown">
+                                            <ion-icon name="shield-checkmark" class="mr-2"></ion-icon> Unknown
+                                        </button>
+                                        <button class="material-btn" data-material="typeguard">
+                                            <ion-icon name="search" class="mr-2"></ion-icon> Type Guard
+                                        </button>
+                                        <button class="material-btn" data-material="generic">
+                                            <ion-icon name="cog" class="mr-2"></ion-icon> Genérico
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-text-secondary">Complejidad del Proyecto</label>
+                                        <span id="thicknessValue" class="font-bold text-ts-accent-light">Pequeño</span>
+                                    </div>
+                                    <input type="range" id="thicknessSlider" min="1" max="100" value="20" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer slider">
+                                    <div class="flex justify-between text-xs text-text-muted mt-1">
+                                        <span>Script Simple</span>
+                                        <span>App Media</span>
+                                        <span>Enterprise</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-text-secondary">Experiencia del Equipo</label>
+                                        <span id="areaValue" class="font-bold text-ts-accent-secondary-light">Media</span>
+                                    </div>
+                                    <input type="range" id="areaSlider" min="1" max="100" value="50" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer slider">
+                                    <div class="flex justify-between text-xs text-text-muted mt-1">
+                                        <span>Junior</span>
+                                        <span>Intermedio</span>
+                                        <span>Experto</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-text-secondary">Importancia de Mantenimiento</label>
+                                        <span id="purityValue" class="font-bold text-purple-300">Medio</span>
+                                    </div>
+                                    <input type="range" id="puritySlider" min="1" max="100" value="50" class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer slider">
+                                    <div class="flex justify-between text-xs text-text-muted mt-1">
+                                        <span>Baja</span>
+                                        <span>Media</span>
+                                        <span>Alta</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Gráficos de simulación -->
+                            <div class="space-y-6">
+                                <!-- Gráfico de líneas -->
+                                <div class="bg-gray-900/50 rounded-xl p-4">
+                                    <h4 class="font-bold text-lg mb-4 text-center text-ts-accent-light">Comparación de Seguridad</h4>
+                                    <div class="w-full h-48">
+                                        <canvas id="lineChartCanvas"></canvas>
+                                    </div>
+                                    <div class="text-center text-xs text-text-secondary mt-2">Seguridad vs Flexibilidad por enfoque</div>
+                                </div>
+                                
+                                <!-- Gráfico de radar -->
+                                <div class="bg-gray-900/50 rounded-xl p-4">
+                                    <h4 class="font-bold text-lg mb-4 text-center text-ts-accent-secondary-light">Análisis Multidimensional</h4>
+                                    <div class="w-full h-48">
+                                        <canvas id="radarChartCanvas"></canvas>
+                                    </div>
+                                    <div class="text-center text-xs text-text-secondary mt-2">Comparación de características</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Resultados numéricos -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                            <div class="bg-gray-900/50 rounded-xl p-4 text-center">
+                                <div class="text-text-muted text-sm mb-1">Seguridad de Tipos</div>
+                                <div id="strengthValue" class="text-2xl font-bold text-ts-accent-light">Excelente</div>
+                                <div class="h-2 bg-gray-800 rounded-full overflow-hidden mt-2">
+                                    <div id="strengthBar" class="h-full bg-gradient-to-r from-ts-accent to-ts-accent-dark rounded-full" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-900/50 rounded-xl p-4 text-center">
+                                <div class="text-text-muted text-sm mb-1">Flexibilidad</div>
+                                <div id="conductivityValue" class="text-2xl font-bold text-ts-accent-secondary-light">Alta</div>
+                                <div class="h-2 bg-gray-800 rounded-full overflow-hidden mt-2">
+                                    <div id="conductivityBar" class="h-full bg-gradient-to-r from-ts-accent-secondary to-red-700 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-900/50 rounded-xl p-4 text-center">
+                                <div class="text-text-muted text-sm mb-1">Mantenibilidad</div>
+                                <div id="transparencyValue" class="text-2xl font-bold text-purple-300">Alta</div>
+                                <div class="h-2 bg-gray-800 rounded-full overflow-hidden mt-2">
+                                    <div id="transparencyBar" class="h-full bg-gradient-to-r from-purple-500 to-purple-700 rounded-full" style="width: 97.7%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <div id="simulationConclusion" class="text-text-secondary inline-block px-4 py-2 bg-gray-800/50 rounded-lg">
+                                <ion-icon name="bulb-outline" class="text-ts-accent-tertiary mr-2"></ion-icon>
+                                Unknown ofrece el mejor balance entre seguridad y flexibilidad para proyectos TypeScript
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-4 justify-center mt-8">
+                            <button id="runSimulationBtn" class="px-6 py-3 bg-gradient-to-r from-ts-accent to-ts-accent-dark text-white font-bold rounded-xl shadow-lg shadow-ts-accent/30 hover:shadow-xl hover:shadow-ts-accent/40 transition-all duration-300 hover:-translate-y-1">
+                                <ion-icon name="play-outline" class="mr-2"></ion-icon> Ejecutar Simulación
+                            </button>
+                            <button id="resetSimulationBtn" class="px-6 py-3 bg-gray-800 border border-border text-text-primary font-bold rounded-xl hover:bg-gray-700 transition-all duration-300">
+                                <ion-icon name="refresh-outline" class="mr-2"></ion-icon> Reiniciar
+                            </button>
+                            <button id="showDetailsBtn" class="px-6 py-3 bg-gradient-to-r from-ts-accent-secondary to-red-700 text-white font-bold rounded-xl shadow-lg shadow-ts-accent-secondary/30 hover:shadow-xl hover:shadow-ts-accent-secondary/40 transition-all duration-300 hover:-translate-y-1">
+                                <ion-icon name="analytics-outline" class="mr-2"></ion-icon> Ver Detalles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información de versiones -->
+                <div id="productionInfo" class="mt-8">
+                    <!-- Se llenará con JavaScript -->
+                </div>
+                
+                <div class="text-center mt-8">
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <button id="simulateEvolutionBtn" class="px-6 py-3 bg-gradient-to-r from-ts-accent to-ts-accent-dark text-white font-bold rounded-xl shadow-lg shadow-ts-accent/30 hover:shadow-xl hover:shadow-ts-accent/40 transition-all duration-300 hover:-translate-y-1 animate-pulse-glow">
+                            <ion-icon name="rocket-outline" class="mr-2"></ion-icon> Simular Migración
+                        </button>
+                        <button id="viewSpecsBtn" class="px-6 py-3 bg-gray-800 border border-ts-accent/40 text-ts-accent-light font-bold rounded-xl hover:bg-gray-700 transition-all duration-300">
+                            <ion-icon name="document-text-outline" class="mr-2"></ion-icon> Ver Especificaciones
+                        </button>
+                        <button id="compareMaterialsBtn" class="px-6 py-3 bg-gradient-to-r from-ts-accent-secondary to-red-700 text-white font-bold rounded-xl shadow-lg shadow-ts-accent-secondary/30 hover:shadow-xl hover:shadow-ts-accent-secondary/40 transition-all duration-300 hover:-translate-y-1">
+                            <ion-icon name="scale-outline" class="mr-2"></ion-icon> Comparar Enfoques
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 pt-8 pb-6 border-t border-border bg-gray-900/50 backdrop-blur-lg">
+        <div class="container mx-auto max-w-6xl px-4 text-center">
+            <p class="text-lg mb-2">TypeSafeLab - Any vs Unknown en TypeScript</p>
+            <p class="text-text-secondary mb-4">
+                <ion-icon name="code-slash" class="mr-2"></ion-icon> 2012-2024 | Del JavaScript dinámico a Type Safety controlada | El Futuro del TypeScript
+            </p>
+            <p class="text-sm text-text-muted">
+                Investigación en Type Safety | Seguridad de Tipos | Desarrollo de Software Confiable | TypeScript Avanzado
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal para especificaciones -->
+    <div id="specsModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 z-50 hidden transition-opacity duration-500">
+        <div class="bg-card-bg-solid border border-border rounded-2xl p-6 md:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95">
+            <button id="closeModal" class="modal-close-btn absolute top-4 right-4 w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-text-muted hover:text-white hover:bg-gray-700 transition-colors text-xl">
+                &times;
+            </button>
+            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-ts-accent-light">
+                <ion-icon name="document-text-outline" class="mr-2"></ion-icon> Especificaciones Técnicas
+            </h2>
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-3 text-ts-accent flex items-center gap-2">
+                            <ion-icon name="cube-outline"></ion-icon> Tipo Any
+                        </h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span><strong>Comportamiento:</strong> Opt-out del sistema de tipos</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span><strong>Compatibilidad:</strong> Total con JavaScript</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span><strong>Uso:</strong> Migración, APIs dinámicas</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span><strong>Riesgo:</strong> Errores en runtime</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span><strong>Config:</strong> noImplicitAny lo detecta</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-3 text-ts-accent-secondary flex items-center gap-2">
+                            <ion-icon name="flash-outline"></ion-icon> Tipo Unknown
+                        </h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span><strong>Comportamiento:</strong> Type-safe por diseño</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span><strong>Verificación:</strong> Requiere type narrowing</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span><strong>Uso:</strong> Valores de entrada desconocidos</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span><strong>Seguridad:</strong> Errores en compilación</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span><strong>Desde:</strong> TypeScript 3.0+</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-900/50 border-l-4 border-ts-accent rounded-r-lg p-4">
+                    <div class="font-mono text-sm space-y-1">
+                        <div class="text-ts-accent-light"># Compilación TypeScript</div>
+                        <div><span class="text-purple-300">1.</span> <span class="text-ts-accent-light">any:</span> Sin verificación, igual que JavaScript</div>
+                        <div><span class="text-purple-300">2.</span> <span class="text-ts-accent-light">unknown:</span> Verificación estricta, type narrowing</div>
+                        <div><span class="text-purple-300">3.</span> <span class="text-ts-accent-light">Type Guards:</span> typeof, instanceof, type predicates</div>
+                        <div><span class="text-purple-300">4.</span> <span class="text-ts-accent-light">Type Assertion:</span> as Type, útil con unknown</div>
+                        <div><span class="text-purple-300">5.</span> <span class="text-ts-accent-light">Never Type:</span> Caso imposible, complementa unknown</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para comparación -->
+    <div id="compareModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 z-50 hidden transition-opacity duration-500">
+        <div class="bg-card-bg-solid border border-border rounded-2xl p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-transform duration-500 scale-95">
+            <button id="closeCompareModal" class="modal-close-btn absolute top-4 right-4 w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-text-muted hover:text-white hover:bg-gray-700 transition-colors text-xl">
+                &times;
+            </button>
+            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-ts-accent-light">
+                <ion-icon name="scale-outline" class="mr-2"></ion-icon> Comparativa de Estrategias de Tipado
+            </h2>
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-3 text-ts-accent flex items-center gap-2">
+                            <ion-icon name="checkmark-circle-outline"></ion-icon> Ventajas de Unknown
+                        </h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Seguridad de tipos en tiempo de compilación</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Documentación implícita del código</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Refactoring más seguro</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Mejor autocompletado en IDEs</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent"></ion-icon>
+                                <span>Detección temprana de errores</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-3 text-ts-accent-secondary flex items-center gap-2">
+                            <ion-icon name="close-circle-outline"></ion-icon> Riesgos de Any
+                        </h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Errores en tiempo de ejecución</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Pérdida de información de tipos en IDEs</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Refactoring peligroso</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Documentación pobre del código</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <ion-icon name="ellipse" class="text-xs mt-2 text-ts-accent-secondary"></ion-icon>
+                                <span>Degradación gradual de type safety</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-900/50 border-l-4 border-ts-accent-secondary rounded-r-lg p-4">
+                    <div class="font-mono text-sm space-y-1">
+                        <div class="text-ts-accent-light"># Casos de Uso por Estrategia</div>
+                        <div><span class="text-ts-accent">"unknown + type guard:"</span> Valores de entrada externos, APIs dinámicas</div>
+                        <div><span class="text-ts-accent-secondary">"any temporal:"</span> Migración gradual, prototipado rápido</div>
+                        <div><span class="text-purple-300">"genéricos con restricciones:"</span> Funciones utilitarias reutilizables</div>
+                        <div><span class="text-ts-accent-tertiary">"union types:"</span> Valores con formas conocidas limitadas</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-gray-900/50 rounded-xl p-4 text-center">
+                        <div class="text-3xl font-black bg-gradient-to-r from-ts-accent to-ts-accent-dark bg-clip-text text-transparent">68%</div>
+                        <div class="text-sm text-text-secondary mt-1">Proyectos con noImplicitAny</div>
+                    </div>
+                    <div class="bg-gray-900/50 rounded-xl p-4 text-center">
+                        <div class="text-3xl font-black bg-gradient-to-r from-ts-accent-secondary to-red-700 bg-clip-text text-transparent">42%</div>
+                        <div class="text-sm text-text-secondary mt-1">Menos errores runtime</div>
+                    </div>
+                    <div class="bg-gray-900/50 rounded-xl p-4 text-center">
+                        <div class="text-3xl font-black bg-gradient-to-r from-ts-accent-tertiary to-amber-700 bg-clip-text text-transparent">12 años</div>
+                        <div class="text-sm text-text-secondary mt-1">Evolución TypeScript</div>
+                    </div>
+                    <div class="bg-gray-900/50 rounded-xl p-4 text-center">
+                        <div class="text-3xl font-black bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">3.0+</div>
+                        <div class="text-sm text-text-secondary mt-1">Versión con unknown</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

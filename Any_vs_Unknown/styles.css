@@ -1,0 +1,404 @@
+/* Estilos personalizados para TypeSafeLab */
+
+/* Variables personalizadas */
+:root {
+    --ts-primary: #3178c6;
+    --ts-secondary: #ff6b6b;
+    --ts-tertiary: #ffd93d;
+    --ts-dark: #0a0a12;
+    --ts-card: #121220;
+}
+
+/* Animación para tipos de TypeScript */
+@keyframes typeRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes tsPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes dataFlow {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(49, 120, 198, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(49, 120, 198, 0.8); }
+}
+
+/* Animaciones personalizadas */
+.animate-ts-pulse {
+    animation: tsPulse 3s ease-in-out infinite;
+}
+
+.animate-type-rotate {
+    animation: typeRotate 20s linear infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-data-flow {
+    animation: dataFlow 3s linear infinite;
+}
+
+/* Estilos para botones de enfoque de tipado */
+.material-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    background: rgba(30, 30, 60, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.material-btn:hover {
+    background: rgba(49, 120, 198, 0.1);
+    border-color: rgba(49, 120, 198, 0.3);
+    color: rgb(77, 147, 240);
+}
+
+.material-btn.active {
+    background: rgba(49, 120, 198, 0.2);
+    border-color: rgb(49, 120, 198);
+    color: rgb(77, 147, 240);
+    box-shadow: 0 0 15px rgba(49, 120, 198, 0.3);
+}
+
+/* Mejoras para la simulación */
+#simulationContainer {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Estilos para tarjetas de métodos de producción */
+.method-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.method-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para símbolos de TypeScript */
+.type-symbol {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(49, 120, 198, 0.2), rgba(49, 120, 198, 0.05));
+    margin: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.type-symbol:before,
+.type-symbol:after {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border: 2px solid rgba(49, 120, 198, 0.5);
+    border-radius: 50%;
+}
+
+.type-symbol:before {
+    top: 20px;
+    left: 20px;
+    transform: rotate(45deg);
+}
+
+.type-symbol:after {
+    top: 20px;
+    left: 20px;
+    transform: rotate(90deg);
+}
+
+/* Efectos de vidrio mejorados */
+.glass-effect {
+    background: rgba(18, 18, 32, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mejoras para gráficos */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 640px) {
+    .material-btn {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .timeline-item .min-w-\[120px\] {
+        min-width: 100px !important;
+    }
+    
+    .timeline-item .min-w-\[140px\] {
+        min-width: 120px !important;
+    }
+}
+
+/* Mejoras para sliders en móviles */
+@media (hover: none) and (pointer: coarse) {
+    .slider::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Animación para notificaciones */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Estilos para los modales dinámicos */
+.fixed.inset-0.bg-black\\/90 .bg-card-bg-solid {
+    transition: transform 0.3s ease-out;
+}
+
+/* Mejoras de accesibilidad */
+button:focus-visible,
+.material-btn:focus-visible,
+.slider:focus-visible {
+    outline: 2px solid #3178c6;
+    outline-offset: 2px;
+}
+
+/* Estilos para iconos de Ionic */
+ion-icon {
+    vertical-align: middle;
+}
+
+/* Efecto de brillo para elementos destacados */
+.glow-effect {
+    box-shadow: 0 0 20px rgba(49, 120, 198, 0.5);
+}
+
+/* Efecto de partículas flotantes */
+.floating-particle {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Resaltado de texto para términos importantes */
+.highlight {
+    background: linear-gradient(120deg, rgba(49, 120, 198, 0.3) 0%, rgba(49, 120, 198, 0.1) 100%);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+}
+
+/* Estilos para código TypeScript */
+.code-typescript {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(30, 30, 60, 0.7);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+
+/* Timeline ajustes */
+.timeline-container {
+    position: relative;
+}
+
+.timeline-item {
+    opacity: 0;
+    transition: opacity 0.8s ease-out;
+}
+
+/* Animaciones de entrada */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.8s ease-out forwards;
+}
+
+/* Ajustes responsivos adicionales */
+@media (max-width: 768px) {
+    .timeline-container .absolute {
+        left: 30px !important;
+        transform: none !important;
+    }
+    
+    .md\\:w-1\\/2 {
+        width: 100% !important;
+    }
+    
+    .md\\:text-right, .md\\:pl-12, .md\\:pr-12 {
+        text-align: left !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    .md\\:order-1, .md\\:order-2, .md\\:order-3 {
+        order: initial !important;
+    }
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(18, 18, 32, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(49, 120, 198, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(49, 120, 198, 0.7);
+}
+
+/* Loading spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(49, 120, 198, 0.2);
+    border-top: 4px solid #3178c6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos para tablas de comparación */
+.comparison-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.comparison-table th {
+    background: rgba(49, 120, 198, 0.1);
+    border-bottom: 2px solid rgba(49, 120, 198, 0.3);
+}
+
+.comparison-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comparison-table tr:hover {
+    background: rgba(49, 120, 198, 0.05);
+}
+
+/* Badges para estados */
+.badge-any {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.badge-unknown {
+    background: rgba(49, 120, 198, 0.1);
+    color: #3178c6;
+    border: 1px solid rgba(49, 120, 198, 0.3);
+}
+
+.badge-safe {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Estilos para ejemplos de código */
+.code-example {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(10, 10, 18, 0.8);
+    border-left: 4px solid #3178c6;
+    padding: 1rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    overflow-x: auto;
+}
+
+.code-example .comment {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.code-example .keyword {
+    color: #ff6b6b;
+}
+
+.code-example .type {
+    color: #3178c6;
+}
+
+.code-example .string {
+    color: #ffd93d;
+}
+
+.code-example .number {
+    color: #8b5cf6;
+}
+
+/* Gradientes personalizados */
+.gradient-type-safe {
+    background: linear-gradient(135deg, #3178c6 0%, #235a97 100%);
+}
+
+.gradient-type-unsafe {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+}
+
+.gradient-type-warning {
+    background: linear-gradient(135deg, #ffd93d 0%, #ffc107 100%);
+}
