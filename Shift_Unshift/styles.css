@@ -1,0 +1,362 @@
+/* Estilos personalizados para ArrayMethodsLab */
+
+/* Variables personalizadas */
+:root {
+  --array-primary: #61dafb;
+  --array-secondary: #ff6b6b;
+  --array-tertiary: #ffd93d;
+  --array-dark: #0a0a12;
+  --array-card: #121220;
+}
+
+/* Animaciones para operaciones de arreglos */
+@keyframes shiftAnimation {
+  0% { transform: translateX(0) scale(1); opacity: 1; }
+  100% { transform: translateX(-100px) scale(0.5); opacity: 0; }
+}
+
+@keyframes unshiftAnimation {
+  0% { transform: translateX(100px) scale(0.5); opacity: 0; }
+  100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes arrayPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes dataFlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes highlight {
+  0%, 100% { box-shadow: 0 0 10px rgba(97, 218, 251, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(97, 218, 251, 0.8); }
+}
+
+/* Animaciones personalizadas */
+.animate-array-pulse {
+  animation: arrayPulse 2s ease-in-out infinite;
+}
+
+.animate-shift {
+  animation: shiftAnimation 0.5s ease-out forwards;
+}
+
+.animate-unshift {
+  animation: unshiftAnimation 0.5s ease-out forwards;
+}
+
+.animate-data-flow {
+  animation: dataFlow 3s linear infinite;
+}
+
+.animate-highlight {
+  animation: highlight 2s ease-in-out infinite;
+}
+
+/* Estilos para botones de operación */
+.array-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  background: rgba(30, 30, 60, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.array-btn:hover {
+  background: rgba(97, 218, 251, 0.1);
+  border-color: rgba(97, 218, 251, 0.3);
+  color: #88e1ff;
+  transform: translateY(-2px);
+}
+
+.array-btn:active {
+  transform: translateY(0);
+}
+
+.array-btn.primary {
+  background: rgba(97, 218, 251, 0.2);
+  border-color: #61dafb;
+  color: #88e1ff;
+  box-shadow: 0 0 15px rgba(97, 218, 251, 0.3);
+}
+
+.array-btn.secondary {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+  color: #ff8787;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+}
+
+/* Estilos para elementos del arreglo */
+.array-item {
+  position: relative;
+  transition: all 0.3s ease;
+  min-height: 120px;
+}
+
+.array-item:hover {
+  transform: translateY(-5px) scale(1.05);
+  z-index: 10;
+}
+
+.array-item.shifted {
+  animation: shiftAnimation 0.5s ease-out forwards;
+}
+
+.array-item.unshifted {
+  animation: unshiftAnimation 0.5s ease-out forwards;
+}
+
+/* Efectos de vidrio mejorados */
+.glass-effect {
+  background: rgba(18, 18, 32, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para la visualización del arreglo */
+.array-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem;
+  min-height: 200px;
+  position: relative;
+}
+
+.array-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--array-primary), transparent);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+/* Estilos para sliders */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--array-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: var(--array-primary);
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(97, 218, 251, 0.5);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--array-primary);
+  cursor: pointer;
+  border: none;
+}
+
+/* Animación para notificaciones */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Mejoras de accesibilidad */
+button:focus-visible,
+.array-btn:focus-visible,
+.slider:focus-visible {
+  outline: 2px solid #61dafb;
+  outline-offset: 2px;
+}
+
+/* Estilos para iconos de Ionic */
+ion-icon {
+  vertical-align: middle;
+}
+
+/* Efecto de brillo para elementos destacados */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(97, 218, 251, 0.5);
+}
+
+/* Efecto de partículas flotantes */
+.floating-particle {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Resaltado de texto para términos importantes */
+.highlight {
+  background: linear-gradient(120deg, rgba(97, 218, 251, 0.3) 0%, rgba(97, 218, 251, 0.1) 100%);
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(18, 18, 32, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(97, 218, 251, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(97, 218, 251, 0.7);
+}
+
+/* Loading spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(97, 218, 251, 0.2);
+  border-top: 4px solid #61dafb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estilos para canvas de visualización */
+.array-canvas {
+  width: 100%;
+  height: 300px;
+  background: rgba(10, 10, 18, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para el historial de operaciones */
+.history-entry {
+  transition: all 0.3s ease;
+}
+
+.history-entry:hover {
+  transform: translateX(5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Estilos para métricas */
+.metric-card {
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Clases específicas para colores */
+.text-array-accent { color: #61dafb; }
+.text-array-accent-light { color: #88e1ff; }
+.text-array-accent-secondary { color: #ff6b6b; }
+.text-array-accent-secondary-light { color: #ff8787; }
+.text-array-accent-tertiary { color: #ffd93d; }
+.text-array-accent-tertiary-light { color: #ffed4e; }
+.bg-array-accent { background-color: #61dafb; }
+.bg-array-accent-secondary { background-color: #ff6b6b; }
+.bg-array-accent-tertiary { background-color: #ffd93d; }
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .array-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .array-item {
+    min-width: 80% !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .array-btn {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Mejoras para sliders en móviles */
+@media (hover: none) and (pointer: coarse) {
+  .slider::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Animación de entrada */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.8s ease-out forwards;
+}
+
+/* Clase para animar elementos del array */
+.array-item-animate {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

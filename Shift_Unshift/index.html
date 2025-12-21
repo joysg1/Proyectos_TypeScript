@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArrayMethodsLab - Shift y Unshift en Arreglos</title>
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'array-dark': '#0a0a12',
+                        'array-secondary': '#121220',
+                        'array-accent': '#61dafb',
+                        'array-accent-light': '#88e1ff',
+                        'array-accent-dark': '#00a8ff',
+                        'array-gradient': 'linear-gradient(135deg, #61dafb 0%, #00a8ff 100%)',
+                        'array-accent-secondary': '#ff6b6b',
+                        'array-accent-secondary-light': '#ff8787',
+                        'array-secondary-gradient': 'linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%)',
+                        'array-accent-tertiary': '#ffd93d',
+                        'array-accent-tertiary-light': '#ffed4e',
+                        'text-primary': '#f8fafc',
+                        'text-secondary': '#cbd5e1',
+                        'text-muted': '#94a3b8',
+                        'success': '#10b981',
+                        'warning': '#f59e0b',
+                        'danger': '#ef4444',
+                        'info': '#3b82f6',
+                        'border': '#334155',
+                        'border-light': '#475569',
+                        'card-bg': 'rgba(18, 18, 32, 0.9)',
+                        'card-bg-solid': '#1e1b4b',
+                        'glass-bg': 'rgba(10, 10, 18, 0.95)',
+                        'shadow': 'rgba(0, 0, 0, 0.6)',
+                        'shadow-accent': 'rgba(97, 218, 251, 0.3)',
+                        'shadow-secondary': 'rgba(255, 107, 107, 0.3)',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'jetbrains': ['JetBrains Mono', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'highlight': 'highlight 2s ease-in-out infinite',
+                        'array-pulse': 'array-pulse 2s ease-in-out infinite',
+                        'data-flow': 'data-flow 3s linear infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                        'slide-in': 'slideIn 0.8s ease-out forwards',
+                        'shift': 'shiftAnimation 0.5s ease-out forwards',
+                        'unshift': 'unshiftAnimation 0.5s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-array-dark text-text-primary font-inter min-h-screen overflow-x-hidden">
+    <!-- Canvas para visualización de arreglos -->
+    <canvas id="arrayCanvas" class="array-canvas fixed top-0 left-0 w-full h-64 pointer-events-none z-0 opacity-50"></canvas>
+
+    <!-- Header -->
+    <header class="relative bg-glass-bg backdrop-blur-xl border-b border-border py-12 md:py-16 px-4 mb-12 shadow-2xl overflow-hidden z-10">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-array-accent to-transparent opacity-70"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-array-accent-secondary to-transparent opacity-50"></div>
+        
+        <div class="container mx-auto max-w-6xl px-4">
+            <div class="text-center relative z-10">
+                <div class="text-array-accent text-4xl md:text-5xl mb-4 animate-highlight">
+                    <ion-icon name="code-slash-outline"></ion-icon>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-4 bg-gradient-to-r from-array-accent-light to-array-accent-tertiary-light bg-clip-text text-transparent">
+                    ArrayMethodsLab
+                </h1>
+                <p class="text-xl md:text-2xl text-text-secondary max-w-4xl mx-auto mb-8 leading-relaxed">
+                    Shift y Unshift en Arreglos: Manipulación de Elementos al Inicio
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="inline-flex items-center gap-2 px-6 py-3 bg-array-accent/10 border border-array-accent/40 rounded-full text-array-accent-light font-semibold backdrop-blur-sm shadow-lg shadow-array-accent/10 animate-array-pulse">
+                        <ion-icon name="arrow-back-outline"></ion-icon>
+                        unshift(): Agrega elementos al inicio del arreglo
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-6 py-3 bg-array-accent-secondary/10 border border-array-accent-secondary/40 rounded-full text-array-accent-secondary-light font-semibold backdrop-blur-sm shadow-lg shadow-array-accent-secondary/10">
+                        <ion-icon name="arrow-forward-outline"></ion-icon>
+                        shift(): Elimina el primer elemento del arreglo
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-6xl px-4 mb-16 relative z-10">
+        <!-- Simulador Interactivo (colocado primero para pruebas) -->
+        <section class="mb-16">
+            <div class="bg-card-bg backdrop-blur-xl border border-array-accent/30 rounded-2xl p-6 md:p-8 shadow-2xl">
+                <div class="flex items-center mb-8">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-array-accent to-array-accent-dark flex items-center justify-center mr-6 shadow-xl shadow-array-accent/30">
+                        <ion-icon name="play-circle-outline" class="text-2xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Simulador Interactivo</h2>
+                </div>
+                
+                <div id="simulationContainer" class="space-y-6">
+                    <!-- Visualización del Arreglo -->
+                    <div class="bg-gray-900/40 border border-border rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-array-accent-light">
+                                <ion-icon name="list-outline" class="mr-2"></ion-icon>
+                                Arreglo Actual
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <div class="text-sm text-text-secondary">Longitud:</div>
+                                <div id="arrayLength" class="text-2xl font-bold text-array-accent-light">5</div>
+                            </div>
+                        </div>
+                        
+                        <div id="arrayContainer" class="array-container mb-6">
+                            <!-- Los elementos del arreglo se insertan aquí dinámicamente -->
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-text-secondary">Capacidad del arreglo</span>
+                                <span id="arrayLengthPercent" class="font-bold text-array-accent-light">50%</span>
+                            </div>
+                            <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
+                                <div id="arrayLengthBar" class="h-full bg-gradient-to-r from-array-accent to-array-accent-dark rounded-full transition-all duration-500" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Controles de operación -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="space-y-4">
+                                <h4 class="font-bold text-lg text-array-accent-secondary-light">Operaciones Básicas</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button id="shiftBtn" class="array-btn secondary flex flex-col items-center justify-center py-4">
+                                        <ion-icon name="remove-outline" class="text-2xl mb-2"></ion-icon>
+                                        <span class="font-bold">shift()</span>
+                                        <span class="text-xs text-text-secondary mt-1">Eliminar primer elemento</span>
+                                    </button>
+                                    
+                                    <button id="unshiftBtn" class="array-btn primary flex flex-col items-center justify-center py-4">
+                                        <ion-icon name="add-outline" class="text-2xl mb-2"></ion-icon>
+                                        <span class="font-bold">unshift()</span>
+                                        <span class="text-xs text-text-secondary mt-1">Agregar al inicio</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <label class="block text-text-secondary mb-2">Agregar elemento personalizado:</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="customValue" placeholder="Ej: MiElemento" class="flex-grow bg-gray-900/50 border border-border rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-array-accent">
+                                        <button id="addCustomBtn" class="array-btn bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30">
+                                            <ion-icon name="add-circle-outline" class="mr-2"></ion-icon>
+                                            Agregar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h4 class="font-bold text-lg text-array-accent-tertiary-light">Demostración Automática</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between mb-2">
+                                            <label class="text-text-secondary">Velocidad de demo</label>
+                                            <span id="speedValue" class="font-bold text-array-accent-tertiary-light">500ms</span>
+                                        </div>
+                                        <input type="range" id="demoSpeed" min="100" max="2000" value="500" step="100" class="slider">
+                                        <div class="flex justify-between text-xs text-text-muted mt-1">
+                                            <span>Rápido</span>
+                                            <span>Lento</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between mb-2">
+                                            <label class="text-text-secondary">Número de operaciones</label>
+                                            <span id="opsValue" class="font-bold text-array-accent-tertiary-light">10</span>
+                                        </div>
+                                        <input type="range" id="demoOperations" min="5" max="50" value="10" step="5" class="slider">
+                                        <div class="flex justify-between text-xs text-text-muted mt-1">
+                                            <span>5</span>
+                                            <span>50</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pt-4">
+                                        <button id="autoDemoBtn" class="array-btn w-full bg-gradient-to-r from-array-accent-tertiary to-amber-700 text-white font-bold py-3">
+                                            <ion-icon name="play-outline" class="mr-2"></ion-icon>
+                                            Demo Automática
+                                            <span id="demoProgress" class="ml-2 text-xs bg-black/30 px-2 py-1 rounded">0/0</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-center gap-4">
+                            <button id="resetBtn" class="array-btn bg-gray-800 border border-border text-text-primary font-bold">
+                                <ion-icon name="refresh-outline" class="mr-2"></ion-icon>
+                                Reiniciar Arreglo
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Métricas y Estadísticas -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-900/40 border border-border rounded-xl p-6">
+                            <h4 class="font-bold text-lg mb-4 text-array-accent-light">
+                                <ion-icon name="stats-chart-outline" class="mr-2"></ion-icon>
+                                Métricas de Operaciones
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="metric-card bg-gray-900/50 rounded-xl p-4 text-center">
+                                    <div class="text-text-muted text-sm mb-1">shift() ejecutados</div>
+                                    <div id="shiftCount" class="text-3xl font-bold text-array-accent-secondary-light">0</div>
+                                </div>
+                                
+                                <div class="metric-card bg-gray-900/50 rounded-xl p-4 text-center">
+                                    <div class="text-text-muted text-sm mb-1">unshift() ejecutados</div>
+                                    <div id="unshiftCount" class="text-3xl font-bold text-array-accent-light">0</div>
+                                </div>
+                                
+                                <div class="metric-card bg-gray-900/50 rounded-xl p-4 text-center">
+                                    <div class="text-text-muted text-sm mb-1">Total operaciones</div>
+                                    <div id="totalOperations" class="text-3xl font-bold text-purple-300">0</div>
+                                </div>
+                                
+                                <div class="metric-card bg-gray-900/50 rounded-xl p-4 text-center">
+                                    <div class="text-text-muted text-sm mb-1">Tiempo promedio</div>
+                                    <div id="averageTime" class="text-3xl font-bold text-array-accent-tertiary-light">0.00</div>
+                                    <div class="text-xs text-text-secondary">ms/operación</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-900/40 border border-border rounded-xl p-6">
+                            <h4 class="font-bold text-lg mb-4 text-array-accent-secondary-light">
+                                <ion-icon name="time-outline" class="mr-2"></ion-icon>
+                                Historial de Operaciones
+                            </h4>
+                            <div id="operationsHistory" class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                                <!-- El historial se inserta aquí dinámicamente -->
+                            </div>
+                            <div class="text-xs text-text-secondary mt-3 text-center">
+                                Últimas 10 operaciones (más recientes primero)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección principal de tarjetas -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <!-- Tarjeta 1: ¿Qué son shift() y unshift()? -->
+            <div class="bg-card-bg backdrop-blur-xl border border-border rounded-2xl p-6 md:p-8 shadow-2xl transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-array-accent/30 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-array-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="flex items-center mb-6 pb-6 border-b border-border-light">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-array-accent to-array-accent-dark flex items-center justify-center mr-4 md:mr-6 shadow-xl shadow-array-accent/30">
+                        <ion-icon name="code-slash-outline" class="text-2xl md:text-3xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Métodos shift() y unshift()</h2>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-text-secondary leading-relaxed">
+                        Los métodos <span class="highlight">shift()</span> y <span class="highlight">unshift()</span> son operaciones fundamentales para manipular arreglos en JavaScript/TypeScript, específicamente para trabajar con elementos al inicio del arreglo.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="bg-gray-900/70 border-l-4 border-array-accent rounded-r-lg p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <ion-icon name="add-outline" class="text-array-accent-light"></ion-icon>
+                                <h4 class="font-bold text-array-accent-light">unshift(elemento)</h4>
+                            </div>
+                            <ul class="space-y-2 text-text-secondary text-sm">
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent"></ion-icon>
+                                    <span>Agrega uno o más elementos al inicio</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent"></ion-icon>
+                                    <span>Devuelve la nueva longitud del arreglo</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent"></ion-icon>
+                                    <span>Complejidad: O(n) - todos los elementos se desplazan</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent"></ion-icon>
+                                    <span>Modifica el arreglo original</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-gray-900/70 border-l-4 border-array-accent-secondary rounded-r-lg p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <ion-icon name="remove-outline" class="text-array-accent-secondary-light"></ion-icon>
+                                <h4 class="font-bold text-array-accent-secondary-light">shift()</h4>
+                            </div>
+                            <ul class="space-y-2 text-text-secondary text-sm">
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent-secondary"></ion-icon>
+                                    <span>Elimina el primer elemento del arreglo</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent-secondary"></ion-icon>
+                                    <span>Devuelve el elemento eliminado</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent-secondary"></ion-icon>
+                                    <span>Complejidad: O(1) - solo se elimina el primero</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ion-icon name="ellipse" class="text-xs mt-1 text-array-accent-secondary"></ion-icon>
+                                    <span>Modifica el arreglo original</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 border border-border-light rounded-lg p-4 mt-4">
+                        <h4 class="font-bold text-array-accent-tertiary-light mb-2 flex items-center gap-2">
+                            <ion-icon name="bulb-outline"></ion-icon>
+                            Casos de Uso Comunes
+                        </h4>
+                        <ul class="space-y-2 text-text-secondary text-sm">
+                            <li><strong>Colas (Queues):</strong> shift() para eliminar, unshift() para agregar (aunque push/pop es más eficiente)</li>
+                            <li><strong>Procesamiento en orden:</strong> shift() para procesar elementos en el orden en que llegaron</li>
+                            <li><strong>Manejo de buffers:</strong> unshift() para agregar nuevos elementos al inicio de un buffer</li>
+                            <li><strong>Reversión de orden:</strong> Combinar con push() para revertir elementos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Comparación con otros métodos -->
+            <div class="bg-card-bg backdrop-blur-xl border border-array-accent-secondary/30 rounded-2xl p-6 md:p-8 shadow-2xl transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-array-accent-secondary/30 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-br from-array-accent-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="flex items-center mb-6 pb-6 border-b border-border-light">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-array-accent-secondary to-red-700 flex items-center justify-center mr-4 md:mr-6 shadow-xl shadow-array-accent-secondary/30">
+                        <ion-icon name="git-compare-outline" class="text-2xl md:text-3xl text-white"></ion-icon>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold">Comparación de Métodos</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-text-secondary">
+                            <thead>
+                                <tr class="border-b border-border-light">
+                                    <th class="text-left py-3 px-2 font-bold text-array-accent-light">Método</th>
+                                    <th class="text-left py-3 px-2 font-bold text-array-accent-light">Dirección</th>
+                                    <th class="text-left py-3 px-2 font-bold text-array-accent-light">Complejidad</th>
+                                    <th class="text-left py-3 px-2 font-bold text-array-accent-light">Retorna</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-border-light/30 hover:bg-gray-900/50">
+                                    <td class="py-3 px-2">
+                                        <code class="bg-gray-900/50 px-2 py-1 rounded text-array-accent">unshift()</code>
+                                    </td>
+                                    <td class="py-3 px-2">Inicio ←</td>
+                                    <td class="py-3 px-2">
+                                        <span class="px-2 py-1 bg-red-500/20 text-red-300 rounded text-xs">O(n)</span>
+                                    </td>
+                                    <td class="py-3 px-2">Nueva longitud</td>
+                                </tr>
+                                <tr class="border-b border-border-light/30 hover:bg-gray-900/50">
+                                    <td class="py-3 px-2">
+                                        <code class="bg-gray-900/50 px-2 py-1 rounded text-array-accent-secondary">shift()</code>
+                                    </td>
+                                    <td class="py-3 px-2">Inicio →</td>
+                                    <td class="py-3 px-2">
+                                        <span class="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs">O(1)</span>
+                                    </td>
+                                    <td class="py-3 px-2">Elemento eliminado</td>
+                                </tr>
+                                <tr class="border-b border-border-light/30 hover:bg-gray-900/50">
+                                    <td class="py-3 px-2">
+                                        <code class="bg-gray-900/50 px-2 py-1 rounded text-purple-300">push()</code>
+                                    </td>
+                                    <td class="py-3 px-2">Final ←</td>
+                                    <td class="py-3 px-2">
+                                        <span class="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs">O(1)</span>
+                                    </td>
+                                    <td class="py-3 px-2">Nueva longitud</td>
+                                </tr>
+                                <tr class="hover:bg-gray-900/50">
+                                    <td class="py-3 px-2">
+                                        <code class="bg-gray-900/50 px-2 py-1 rounded text-array-accent-tertiary-light">pop()</code>
+                                    </td>
+                                    <td class="py-3 px-2">Final →</td>
+                                    <td class="py-3 px-2">
+                                        <span class="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs">O(1)</span>
+                                    </td>
+                                    <td class="py-3 px-2">Elemento eliminado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="bg-gray-900/50 border-l-4 border-array-accent-tertiary rounded-r-lg p-4 mt-4">
+                        <h4 class="font-bold text-array-accent-tertiary-light mb-2">Ejemplo Práctico</h4>
+                        <pre class="font-jetbrains text-sm bg-gray-900/70 p-3 rounded-lg overflow-x-auto">
+<span class="text-array-accent">const</span> <span class="text-array-accent-secondary">cola</span> = [<span class="text-green-400">'tarea1'</span>, <span class="text-green-400">'tarea2'</span>, <span class="text-green-400">'tarea3'</span>];
+
+<span class="text-gray-500">// Agregar nueva tarea (alta prioridad)</span>
+<span class="text-array-accent-secondary">cola</span>.<span class="text-array-accent">unshift</span>(<span class="text-green-400">'tareaUrgente'</span>);
+<span class="text-gray-500">// cola = ['tareaUrgente', 'tarea1', 'tarea2', 'tarea3']</span>
+
+<span class="text-gray-500">// Procesar siguiente tarea</span>
+<span class="text-array-accent">const</span> <span class="text-array-accent-secondary">tareaActual</span> = <span class="text-array-accent-secondary">cola</span>.<span class="text-array-accent">shift</span>();
+<span class="text-gray-500">// tareaActual = 'tareaUrgente'</span>
+<span class="text-gray-500">// cola = ['tarea1', 'tarea2', 'tarea3']</span></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 pt-8 pb-6 border-t border-border bg-gray-900/50 backdrop-blur-lg">
+        <div class="container mx-auto max-w-6xl px-4 text-center">
+            <p class="text-lg mb-2">ArrayMethodsLab - Shift y Unshift en Arreglos</p>
+            <p class="text-text-secondary mb-4">
+                <ion-icon name="code-slash-outline" class="mr-2"></ion-icon> 
+                Métodos Fundamentales de JavaScript/TypeScript | Manipulación de Arreglos | Complejidad Algorítmica
+            </p>
+            <p class="text-sm text-text-muted">
+                Proyecto Educativo | Estructuras de Datos | Algoritmos | Desarrollo Web Moderno
+            </p>
+        </div>
+    </footer>
+
+    <!-- Contenedor para animaciones -->
+    <div id="animationContainer" class="fixed inset-0 pointer-events-none z-40"></div>
+
+    <!-- Script de la aplicación -->
+    <script>
+        // Cargar la aplicación TypeScript compilada
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar la aplicación directamente
+            const app = new ArrayMethodsLab();
+        });
+    </script>
+    
+    <!-- Script compilado desde TypeScript -->
+    <script>
+// Aplicación educativa sobre shift() y unshift() en arreglos
+// ArrayMethodsLab - Exploración de métodos de manipulación de arreglos
+
+// Clase principal de la aplicación
+class ArrayMethodsLab {
+  constructor() {
+    this.array = [];
+    this.history = [];
+    this.operationsLog = [];
+    this.metrics = {
+      shiftCount: 0,
+      unshiftCount: 0,
+      totalOperations: 0,
+      averageTime: 0,
+      maxItems: 0
+    };
+    this.currentId = 1;
+    this.isAnimating = false;
+    
+    this.arrayContainer = document.getElementById('arrayContainer');
+    this.historyContainer = document.getElementById('operationsHistory');
+    this.shiftCountElement = document.getElementById('shiftCount');
+    this.unshiftCountElement = document.getElementById('unshiftCount');
+    this.totalOpsElement = document.getElementById('totalOperations');
+    this.avgTimeElement = document.getElementById('averageTime');
+    this.arrayLengthElement = document.getElementById('arrayLength');
+    
+    this.initializeArray();
+    this.setupEventListeners();
+    this.updateDisplay();
+    this.initializeAnimations();
+  }
+  
+  // Inicializa el arreglo con algunos elementos
+  initializeArray() {
+    const initialItems = [
+      { value: 'Primero', color: '#61dafb', icon: 'ellipse' },
+      { value: 'Segundo', color: '#ff6b6b', icon: 'diamond' },
+      { value: 'Tercero', color: '#ffd93d', icon: 'square' },
+      { value: 'Cuarto', color: '#8b5cf6', icon: 'triangle' },
+      { value: 'Quinto', color: '#00a8ff', icon: 'star' }
+    ];
+    
+    initialItems.forEach((item, index) => {
+      this.array.push({
+        id: this.currentId++,
+        value: item.value,
+        color: item.color,
+        icon: item.icon,
+        addedBy: 'initial',
+        position: index
+      });
+    });
+    
+    this.metrics.maxItems = this.array.length;
+    
+    // Inicializar operaciones disponibles
+    this.operationsLog = [
+      {
+        id: 1,
+        name: 'shift()',
+        description: 'Elimina el primer elemento del arreglo y lo devuelve',
+        method: 'shift',
+        complexity: 'O(1)',
+        effect: 'Reduce la longitud del arreglo',
+        icon: 'remove-outline',
+        color: '#ff6b6b'
+      },
+      {
+        id: 2,
+        name: 'unshift()',
+        description: 'Agrega uno o más elementos al inicio del arreglo',
+        method: 'unshift',
+        complexity: 'O(n)',
+        effect: 'Aumenta la longitud del arreglo',
+        icon: 'add-outline',
+        color: '#61dafb'
+      }
+    ];
+  }
+  
+  // Configura los event listeners
+  setupEventListeners() {
+    // Botones de operaciones
+    document.getElementById('shiftBtn')?.addEventListener('click', () => this.performShift());
+    document.getElementById('unshiftBtn')?.addEventListener('click', () => this.performUnshift());
+    document.getElementById('resetBtn')?.addEventListener('click', () => this.resetArray());
+    document.getElementById('autoDemoBtn')?.addEventListener('click', () => this.startAutoDemo());
+    document.getElementById('addCustomBtn')?.addEventListener('click', () => this.addCustomItem());
+    
+    // Sliders para demo automática
+    const speedSlider = document.getElementById('demoSpeed');
+    const operationsSlider = document.getElementById('demoOperations');
+    
+    if (speedSlider) {
+      speedSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        const speedValue = document.getElementById('speedValue');
+        if (speedValue) speedValue.textContent = `${value}ms`;
+      });
+    }
+    
+    if (operationsSlider) {
+      operationsSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        const opsValue = document.getElementById('opsValue');
+        if (opsValue) opsValue.textContent = value;
+      });
+    }
+    
+    // Input para elemento personalizado
+    const customInput = document.getElementById('customValue');
+    if (customInput) {
+      customInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          this.addCustomItem();
+        }
+      });
+    }
+  }
+  
+  // Realiza la operación shift
+  performShift() {
+    if (this.isAnimating || this.array.length === 0) return;
+    
+    const startTime = performance.now();
+    const removedItem = this.array.shift();
+    const endTime = performance.now();
+    
+    if (removedItem) {
+      // Actualizar métricas
+      this.metrics.shiftCount++;
+      this.metrics.totalOperations++;
+      this.metrics.averageTime = ((this.metrics.averageTime * (this.metrics.totalOperations - 1)) + (endTime - startTime)) / this.metrics.totalOperations;
+      
+      // Registrar en el historial
+      const historyEntry = `shift() → Eliminado: "${removedItem.value}"`;
+      this.history.unshift(historyEntry);
+      
+      // Actualizar posiciones de los elementos restantes
+      this.array.forEach((item, index) => {
+        item.position = index;
+      });
+      
+      // Actualizar visualización
+      this.updateDisplay();
+      this.animateOperation('shift', removedItem);
+      
+      // Mostrar notificación
+      this.showNotification(`shift(): Se eliminó "${removedItem.value}" del inicio`, 'info');
+    }
+  }
+  
+  // Realiza la operación unshift
+  performUnshift() {
+    if (this.isAnimating) return;
+    
+    const colors = ['#61dafb', '#ff6b6b', '#ffd93d', '#8b5cf6', '#00a8ff', '#10b981', '#f59e0b'];
+    const icons = ['ellipse', 'diamond', 'square', 'triangle', 'star', 'heart', 'flash'];
+    const values = ['Nuevo', 'Agregado', 'Insertado', 'Añadido', 'Elemento'];
+    
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+    const randomValue = `${values[Math.floor(Math.random() * values.length)]} ${this.currentId}`;
+    
+    const newItem = {
+      id: this.currentId++,
+      value: randomValue,
+      color: randomColor,
+      icon: randomIcon,
+      addedBy: 'unshift',
+      position: 0
+    };
+    
+    const startTime = performance.now();
+    this.array.unshift(newItem);
+    const endTime = performance.now();
+    
+    // Actualizar posiciones de todos los elementos
+    this.array.forEach((item, index) => {
+      item.position = index;
+    });
+    
+    // Actualizar métricas
+    this.metrics.unshiftCount++;
+    this.metrics.totalOperations++;
+    this.metrics.averageTime = ((this.metrics.averageTime * (this.metrics.totalOperations - 1)) + (endTime - startTime)) / this.metrics.totalOperations;
+    this.metrics.maxItems = Math.max(this.metrics.maxItems, this.array.length);
+    
+    // Registrar en el historial
+    const historyEntry = `unshift() → Agregado: "${newItem.value}"`;
+    this.history.unshift(historyEntry);
+    
+    // Actualizar visualización
+    this.updateDisplay();
+    this.animateOperation('unshift', newItem);
+    
+    // Mostrar notificación
+    this.showNotification(`unshift(): Se agregó "${newItem.value}" al inicio`, 'success');
+  }
+  
+  // Agrega un elemento personalizado
+  addCustomItem() {
+    const input = document.getElementById('customValue');
+    const value = input.value.trim();
+    
+    if (!value) {
+      this.showNotification('Por favor, ingresa un valor para el elemento', 'warning');
+      return;
+    }
+    
+    const colors = ['#61dafb', '#ff6b6b', '#ffd93d', '#8b5cf6', '#00a8ff'];
+    const icons = ['ellipse', 'diamond', 'square', 'triangle', 'star'];
+    
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+    
+    const newItem = {
+      id: this.currentId++,
+      value: value,
+      color: randomColor,
+      icon: randomIcon,
+      addedBy: 'user',
+      position: 0
+    };
+    
+    const startTime = performance.now();
+    this.array.unshift(newItem);
+    const endTime = performance.now();
+    
+    // Actualizar posiciones de todos los elementos
+    this.array.forEach((item, index) => {
+      item.position = index;
+    });
+    
+    // Actualizar métricas
+    this.metrics.unshiftCount++;
+    this.metrics.totalOperations++;
+    this.metrics.averageTime = ((this.metrics.averageTime * (this.metrics.totalOperations - 1)) + (endTime - startTime)) / this.metrics.totalOperations;
+    this.metrics.maxItems = Math.max(this.metrics.maxItems, this.array.length);
+    
+    // Registrar en el historial
+    const historyEntry = `unshift("${value}") → Agregado por usuario`;
+    this.history.unshift(historyEntry);
+    
+    // Limpiar input
+    input.value = '';
+    
+    // Actualizar visualización
+    this.updateDisplay();
+    this.animateOperation('unshift', newItem);
+    
+    // Mostrar notificación
+    this.showNotification(`Elemento personalizado "${value}" agregado al inicio`, 'success');
+  }
+  
+  // Reinicia el arreglo a su estado inicial
+  resetArray() {
+    this.array = [];
+    this.history = [];
+    this.currentId = 1;
+    this.metrics = {
+      shiftCount: 0,
+      unshiftCount: 0,
+      totalOperations: 0,
+      averageTime: 0,
+      maxItems: 0
+    };
+    
+    this.initializeArray();
+    this.updateDisplay();
+    this.showNotification('Arreglo reiniciado a su estado inicial', 'info');
+  }
+  
+  // Inicia una demostración automática
+  startAutoDemo() {
+    if (this.isAnimating) return;
+    
+    const speedSlider = document.getElementById('demoSpeed');
+    const operationsSlider = document.getElementById('demoOperations');
+    
+    const speed = parseInt(speedSlider.value);
+    const totalOperations = parseInt(operationsSlider.value);
+    
+    let operationsPerformed = 0;
+    
+    this.isAnimating = true;
+    const demoBtn = document.getElementById('autoDemoBtn');
+    demoBtn.innerHTML = '<ion-icon name="stop-outline" class="mr-2 animate-spin"></ion-icon> Detener Demo';
+    
+    const demoInterval = setInterval(() => {
+      if (operationsPerformed >= totalOperations) {
+        clearInterval(demoInterval);
+        this.isAnimating = false;
+        demoBtn.innerHTML = '<ion-icon name="play-outline" class="mr-2"></ion-icon> Demo Automática';
+        this.showNotification(`Demo completada: ${totalOperations} operaciones realizadas`, 'success');
+        return;
+      }
+      
+      // Alternar entre shift y unshift
+      if (this.array.length === 0 || Math.random() > 0.5) {
+        this.performUnshift();
+      } else {
+        this.performShift();
+      }
+      
+      operationsPerformed++;
+      
+      // Actualizar contador de demo
+      const demoProgress = document.getElementById('demoProgress');
+      if (demoProgress) demoProgress.textContent = `${operationsPerformed}/${totalOperations}`;
+    }, speed);
+    
+    // Cambiar el botón para detener la demo
+    const stopDemo = () => {
+      clearInterval(demoInterval);
+      this.isAnimating = false;
+      demoBtn.innerHTML = '<ion-icon name="play-outline" class="mr-2"></ion-icon> Demo Automática';
+      demoBtn.removeEventListener('click', stopDemo);
+      demoBtn.addEventListener('click', () => this.startAutoDemo());
+    };
+    
+    demoBtn.removeEventListener('click', () => this.startAutoDemo());
+    demoBtn.addEventListener('click', stopDemo);
+  }
+  
+  // Actualiza la visualización del arreglo
+  updateDisplay() {
+    if (!this.arrayContainer || !this.historyContainer) return;
+    
+    // Actualizar visualización del arreglo
+    this.arrayContainer.innerHTML = '';
+    
+    this.array.forEach((item, index) => {
+      const itemElement = document.createElement('div');
+      itemElement.className = `array-item flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-xl relative`;
+      itemElement.style.backgroundColor = `${item.color}20`;
+      itemElement.style.border = `2px solid ${item.color}40`;
+      itemElement.style.minWidth = '120px';
+      
+      itemElement.innerHTML = `
+        <div class="absolute top-2 left-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background: ${item.color}">
+          ${index}
+        </div>
+        <div class="text-3xl mb-2" style="color: ${item.color}">
+          <ion-icon name="${item.icon}-outline"></ion-icon>
+        </div>
+        <div class="font-bold text-center mb-1">${item.value}</div>
+        <div class="text-xs text-text-secondary text-center">ID: ${item.id}</div>
+        ${item.addedBy === 'user' ? 
+          '<div class="absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-purple-500/20 text-purple-300">Usuario</div>' : 
+          ''}
+      `;
+      
+      this.arrayContainer.appendChild(itemElement);
+    });
+    
+    // Actualizar historial de operaciones
+    this.historyContainer.innerHTML = '';
+    
+    this.history.slice(0, 10).forEach(entry => {
+      const entryElement = document.createElement('div');
+      entryElement.className = 'history-entry p-3 bg-gray-900/30 rounded-lg mb-2 text-sm border-l-4';
+      
+      // Usar indexOf en lugar de includes para compatibilidad
+      if (entry.indexOf('shift()') !== -1) {
+        entryElement.style.borderLeftColor = '#ff6b6b';
+        entryElement.innerHTML = `<span class="text-array-accent-secondary">${entry}</span>`;
+      } else {
+        entryElement.style.borderLeftColor = '#61dafb';
+        entryElement.innerHTML = `<span class="text-array-accent">${entry}</span>`;
+      }
+      
+      this.historyContainer.appendChild(entryElement);
+    });
+    
+    // Actualizar métricas
+    if (this.shiftCountElement) {
+      this.shiftCountElement.textContent = this.metrics.shiftCount.toString();
+    }
+    
+    if (this.unshiftCountElement) {
+      this.unshiftCountElement.textContent = this.metrics.unshiftCount.toString();
+    }
+    
+    if (this.totalOpsElement) {
+      this.totalOpsElement.textContent = this.metrics.totalOperations.toString();
+    }
+    
+    if (this.avgTimeElement) {
+      this.avgTimeElement.textContent = this.metrics.averageTime.toFixed(2);
+    }
+    
+    if (this.arrayLengthElement) {
+      this.arrayLengthElement.textContent = this.array.length.toString();
+    }
+    
+    // Actualizar barra de longitud
+    const lengthBar = document.getElementById('arrayLengthBar');
+    if (lengthBar) {
+      const percentage = (this.array.length / Math.max(this.metrics.maxItems, 10)) * 100;
+      lengthBar.style.width = `${percentage}%`;
+    }
+    
+    // Actualizar estado de botones
+    const shiftBtn = document.getElementById('shiftBtn');
+    if (shiftBtn) {
+      shiftBtn.disabled = this.array.length === 0;
+    }
+  }
+  
+  // Anima una operación
+  animateOperation(operation, item) {
+    const animationContainer = document.getElementById('animationContainer');
+    if (!animationContainer) return;
+    
+    const animationElement = document.createElement('div');
+    animationElement.className = `operation-animation fixed z-50 flex items-center justify-center`;
+    animationElement.style.color = item.color;
+    
+    if (operation === 'shift') {
+      animationElement.innerHTML = `
+        <div class="flex items-center bg-gray-900/90 backdrop-blur-sm rounded-xl p-4 border-2 shadow-2xl" style="border-color: ${item.color}">
+          <ion-icon name="arrow-forward-outline" class="text-2xl mr-2"></ion-icon>
+          <div class="text-lg font-bold">shift() → "${item.value}"</div>
+          <ion-icon name="exit-outline" class="text-2xl ml-2"></ion-icon>
+        </div>
+      `;
+      animationElement.style.left = '50%';
+      animationElement.style.top = '50%';
+      animationElement.style.transform = 'translate(-50%, -50%) scale(0.5)';
+      animationElement.style.opacity = '0';
+      
+      // Animación de salida
+      setTimeout(() => {
+        animationElement.style.transition = 'all 0.5s ease-out';
+        animationElement.style.transform = 'translate(-50%, -50%) scale(1)';
+        animationElement.style.opacity = '1';
+      }, 10);
+      
+      setTimeout(() => {
+        animationElement.style.transition = 'all 0.5s ease-in';
+        animationElement.style.transform = 'translate(-150%, -50%) scale(0.5)';
+        animationElement.style.opacity = '0';
+      }, 1000);
+      
+      setTimeout(() => {
+        animationElement.remove();
+      }, 1500);
+    } else {
+      animationElement.innerHTML = `
+        <div class="flex items-center bg-gray-900/90 backdrop-blur-sm rounded-xl p-4 border-2 shadow-2xl" style="border-color: ${item.color}">
+          <ion-icon name="arrow-back-outline" class="text-2xl mr-2"></ion-icon>
+          <div class="text-lg font-bold">unshift() → "${item.value}"</div>
+          <ion-icon name="enter-outline" class="text-2xl ml-2"></ion-icon>
+        </div>
+      `;
+      animationElement.style.right = '50%';
+      animationElement.style.top = '50%';
+      animationElement.style.transform = 'translate(50%, -50%) scale(0.5)';
+      animationElement.style.opacity = '0';
+      
+      // Animación de entrada
+      setTimeout(() => {
+        animationElement.style.transition = 'all 0.5s ease-out';
+        animationElement.style.transform = 'translate(50%, -50%) scale(1)';
+        animationElement.style.opacity = '1';
+      }, 10);
+      
+      setTimeout(() => {
+        animationElement.style.transition = 'all 0.5s ease-in';
+        animationElement.style.transform = 'translate(50%, -50%) scale(0.5)';
+        animationElement.style.opacity = '0';
+      }, 1000);
+      
+      setTimeout(() => {
+        animationElement.remove();
+      }, 1500);
+    }
+    
+    animationContainer.appendChild(animationElement);
+  }
+  
+  // Inicializa animaciones de fondo
+  initializeAnimations() {
+    this.createArrayVisualization();
+  }
+  
+  // Crea visualización de arreglo en canvas
+  createArrayVisualization() {
+    const canvas = document.getElementById('arrayCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      this.drawArrayVisualization(ctx);
+    };
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Animar la visualización
+    const animate = () => {
+      this.drawArrayVisualization(ctx);
+      requestAnimationFrame(animate);
+    };
+    
+    animate();
+  }
+  
+  // Función auxiliar para dibujar rectángulos redondeados en canvas
+  drawRoundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+  
+  // Dibuja la visualización del arreglo en canvas
+  drawArrayVisualization(ctx) {
+    const width = ctx.canvas.width;
+    const height = ctx.canvas.height;
+    
+    // Limpiar canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Dibujar fondo
+    const gradient = ctx.createRadialGradient(
+      width / 2, height / 2, 0,
+      width / 2, height / 2, Math.max(width, height) / 2
+    );
+    gradient.addColorStop(0, 'rgba(10, 10, 18, 0.1)');
+    gradient.addColorStop(1, 'rgba(26, 26, 46, 0.3)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Dibujar elementos del arreglo como cajas conectadas
+    const boxWidth = 80;
+    const boxHeight = 60;
+    const startX = width / 2 - (this.array.length * boxWidth) / 2;
+    const startY = height / 2;
+    
+    // Dibujar conexiones
+    ctx.strokeStyle = 'rgba(97, 218, 251, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    
+    for (let i = 0; i < this.array.length - 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(startX + i * boxWidth + boxWidth, startY);
+      ctx.lineTo(startX + (i + 1) * boxWidth, startY);
+      ctx.stroke();
+    }
+    
+    ctx.setLineDash([]);
+    
+    // Dibujar cajas
+    this.array.forEach((item, index) => {
+      const x = startX + index * boxWidth;
+      const y = startY - boxHeight / 2;
+      
+      // Dibujar caja con bordes redondeados
+      ctx.fillStyle = `${item.color}30`;
+      ctx.strokeStyle = item.color;
+      ctx.lineWidth = 2;
+      
+      this.drawRoundedRect(ctx, x, y, boxWidth, boxHeight, 8);
+      ctx.fill();
+      ctx.stroke();
+      
+      // Dibujar índice
+      ctx.fillStyle = item.color;
+      ctx.font = 'bold 14px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(index.toString(), x + boxWidth / 2, y - 10);
+      
+      // Dibujar valor
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.fillText(item.value, x + boxWidth / 2, y + boxHeight / 2 + 5);
+      
+      // Dibujar flecha para shift/unshift
+      if (index === 0) {
+        // Flecha para shift (izquierda)
+        ctx.fillStyle = '#ff6b6b';
+        ctx.beginPath();
+        ctx.moveTo(x - 20, y + boxHeight / 2);
+        ctx.lineTo(x - 10, y + boxHeight / 2 - 5);
+        ctx.lineTo(x - 10, y + boxHeight / 2 + 5);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Flecha para unshift (derecha, invertida)
+        ctx.fillStyle = '#61dafb';
+        ctx.beginPath();
+        ctx.moveTo(x - 15, y + boxHeight / 2);
+        ctx.lineTo(x - 25, y + boxHeight / 2 - 5);
+        ctx.lineTo(x - 25, y + boxHeight / 2 + 5);
+        ctx.closePath();
+        ctx.fill();
+      }
+    });
+    
+    // Dibujar etiquetas
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 12px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('shift() →', startX - 100, startY + 5);
+    
+    ctx.fillStyle = '#61dafb';
+    ctx.textAlign = 'right';
+    ctx.fillText('← unshift()', startX + this.array.length * boxWidth + 100, startY + 5);
+  }
+  
+  // Muestra una notificación
+  showNotification(message, type) {
+    const notification = document.createElement('div');
+    const colors = {
+      'success': 'bg-green-500',
+      'error': 'bg-red-500',
+      'warning': 'bg-yellow-500',
+      'info': 'bg-blue-500'
+    };
+    
+    notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-xl shadow-lg z-50 transform transition-all duration-300 translate-x-full`;
+    
+    // Determinar el icono basado en el tipo
+    let iconName = '';
+    switch (type) {
+      case 'success':
+        iconName = 'checkmark-circle-outline';
+        break;
+      case 'error':
+        iconName = 'close-circle-outline';
+        break;
+      case 'warning':
+        iconName = 'warning-outline';
+        break;
+      case 'info':
+        iconName = 'information-circle-outline';
+        break;
+    }
+    
+    notification.innerHTML = `
+      <div class="flex items-center">
+        <ion-icon name="${iconName}" class="mr-2"></ion-icon>
+        <span>${message}</span>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animar entrada
+    setTimeout(() => {
+      notification.classList.remove('translate-x-full');
+      notification.classList.add('translate-x-0');
+    }, 10);
+    
+    // Eliminar después de 3 segundos
+    setTimeout(() => {
+      notification.classList.remove('translate-x-0');
+      notification.classList.add('translate-x-full');
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    }, 3000);
+  }
+}
+
+// Inicializar la aplicación cuando el DOM esté cargado
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('ArrayMethodsLab: Inicializando aplicación...');
+  
+  // Verificar si Canvas API está disponible
+  if (!HTMLCanvasElement.prototype.getContext) {
+    console.error('Canvas no está soportado en este navegador');
+    return;
+  }
+  
+  // Inicializar la aplicación
+  const app = new ArrayMethodsLab();
+  
+  console.log('ArrayMethodsLab inicializado correctamente');
+});
+    </script>
+</body>
+</html>
