@@ -19,9 +19,9 @@
 ## Cómo usar 🚀
 bash
 
-# npm install    # Instalar dependencias
-# npm run dev    # Iniciar servidor de desarrollo
-# npm run build  # Construir para producción
+## npm install    - Instalar dependencias
+## npm run dev    - Iniciar servidor de desarrollo
+## npm run build  - Construir para producción
 
 Visita http://localhost:3000 para comenzar a calcular
 
