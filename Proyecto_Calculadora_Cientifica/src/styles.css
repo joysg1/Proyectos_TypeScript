@@ -1,0 +1,42 @@
+/* Este archivo es opcional ya que estamos usando Tailwind via CDN */
+/* Puedes agregar estilos personalizados aquí si lo necesitas */
+
+/* Animaciones personalizadas */
+@keyframes button-press {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+.button-pressed {
+    animation: button-press 0.2s ease;
+}
+
+/* Efectos de vidrio esmerilado */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Mejoras para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    button {
+        min-height: 48px;
+        min-width: 48px;
+    }
+    
+    .btn {
+        padding: 16px;
+    }
+}

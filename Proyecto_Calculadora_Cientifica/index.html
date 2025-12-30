@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Científica Avanzada</title>
+    <!-- Tailwind CSS via CDN (temporal) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            transition: all 0.3s ease;
+        }
+
+        /* Tema claro */
+        body.light {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2d3748;
+        }
+
+        body.light .calculator-container {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light .display {
+            background: #f8fafc;
+            color: #1a202c;
+        }
+
+        body.light .btn-number {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        body.light .btn-number:hover {
+            background: #e2e8f0;
+        }
+
+        body.light .btn-operator {
+            background: #4299e1;
+            color: white;
+        }
+
+        body.light .btn-operator:hover {
+            background: #3182ce;
+        }
+
+        body.light .btn-scientific {
+            background: #9f7aea;
+            color: white;
+        }
+
+        body.light .btn-scientific:hover {
+            background: #805ad5;
+        }
+
+        /* Tema oscuro */
+        body.dark {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+        }
+
+        body.dark .calculator-container {
+            background: rgba(30, 41, 59, 0.95);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark .display {
+            background: #1e293b;
+            color: #f1f5f9;
+        }
+
+        body.dark .btn-number {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        body.dark .btn-number:hover {
+            background: #475569;
+        }
+
+        body.dark .btn-operator {
+            background: #3b82f6;
+            color: white;
+        }
+
+        body.dark .btn-operator:hover {
+            background: #2563eb;
+        }
+
+        body.dark .btn-scientific {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        body.dark .btn-scientific:hover {
+            background: #7c3aed;
+        }
+
+        /* Estilos comunes */
+        .calculator-container {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .display {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .btn {
+            transition: all 0.15s ease;
+            border-radius: 10px;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .history-item {
+            transition: all 0.2s ease;
+            border-left: 4px solid;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+        }
+
+        .memory-active {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 3px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.8);
+        }
+    </style>
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body class="dark min-h-screen flex items-center justify-center p-4 md:p-8">
+    <div class="w-full max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-12 px-4">
+            <div class="text-center md:text-left mb-6 md:mb-0">
+                <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    <i class="fas fa-calculator mr-3"></i>Calculadora Científica Pro
+                </h1>
+                <p class="text-gray-400 mt-2">Calculadora avanzada con funciones matemáticas completas</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-300 text-sm"><i class="fas fa-palette mr-1"></i> Tema:</span>
+                    <span id="theme-status" class="font-medium">Oscuro</span>
+                </div>
+                <button id="theme-toggle" class="btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg transition-all duration-300">
+                    <i class="fas fa-sun mr-2"></i>Modo Claro
+                </button>
+            </div>
+        </header>
+
+        <main class="flex flex-col lg:flex-row gap-6 md:gap-8">
+            <!-- Panel Principal - Calculadora -->
+            <div class="lg:w-2/3">
+                <div class="calculator-container rounded-2xl p-5 md:p-8">
+                    <!-- Display -->
+                    <div class="display p-5 md:p-6 mb-6 md:mb-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2">
+                                    <span id="angle-mode" class="px-3 py-1.5 rounded-lg bg-blue-900/30 text-blue-300 text-sm font-medium">DEG</span>
+                                    <span id="memory-indicator" class="px-3 py-1.5 rounded-lg bg-green-900/30 text-green-300 text-sm font-medium hidden">
+                                        <i class="fas fa-sd-card mr-1"></i>M
+                                    </span>
+                                </div>
+                                <div class="text-xs text-gray-400">
+                                    <span id="current-input"></span>
+                                </div>
+                            </div>
+                            <button id="history-toggle" class="text-gray-400 hover:text-blue-400 transition-colors p-2 rounded-lg hover:bg-gray-800/50">
+                                <i class="fas fa-history text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="text-right overflow-x-auto">
+                            <div id="expression" class="text-gray-400 text-lg md:text-xl mb-3 min-h-[30px] break-all">
+                                Ingrese una expresión
+                            </div>
+                            <div id="display" class="text-4xl md:text-5xl font-light mb-2 min-h-[60px] break-all">
+                                0
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teclado -->
+                    <div class="space-y-5">
+                        <!-- Memoria -->
+                        <div class="grid grid-cols-5 gap-3">
+                            <button data-action="mc" class="memory-btn btn py-3.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-blue-300 font-medium">
+                                <i class="fas fa-trash-alt mr-2"></i>MC
+                            </button>
+                            <button data-action="mr" class="memory-btn btn py-3.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-blue-300 font-medium">
+                                <i class="fas fa-download mr-2"></i>MR
+                            </button>
+                            <button data-action="m-plus" class="memory-btn btn py-3.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-blue-300 font-medium">
+                                <i class="fas fa-plus-circle mr-2"></i>M+
+                            </button>
+                            <button data-action="m-minus" class="memory-btn btn py-3.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-blue-300 font-medium">
+                                <i class="fas fa-minus-circle mr-2"></i>M-
+                            </button>
+                            <button data-action="ms" class="memory-btn btn py-3.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-blue-300 font-medium">
+                                <i class="fas fa-save mr-2"></i>MS
+                            </button>
+                        </div>
+
+                        <!-- Teclas principales -->
+                        <div class="grid grid-cols-7 gap-3">
+                            <!-- Funciones científicas (izquierda) -->
+                            <div class="col-span-2 grid grid-cols-2 gap-3">
+                                <button data-func="sin" class="btn-scientific btn py-4 rounded-xl font-medium">sin</button>
+                                <button data-func="cos" class="btn-scientific btn py-4 rounded-xl font-medium">cos</button>
+                                <button data-func="tan" class="btn-scientific btn py-4 rounded-xl font-medium">tan</button>
+                                <button data-func="log" class="btn-scientific btn py-4 rounded-xl font-medium">log</button>
+                                <button data-func="ln" class="btn-scientific btn py-4 rounded-xl font-medium">ln</button>
+                                <button data-func="sqrt" class="btn-scientific btn py-4 rounded-xl font-medium">√x</button>
+                                <button data-func="power" class="btn-scientific btn py-4 rounded-xl font-medium">x^y</button>
+                                <button data-func="factorial" class="btn-scientific btn py-4 rounded-xl font-medium">x!</button>
+                                <button data-func="pi" class="btn-scientific btn py-4 rounded-xl font-medium">π</button>
+                                <button data-func="e" class="btn-scientific btn py-4 rounded-xl font-medium">e</button>
+                            </div>
+
+                            <!-- Calculadora básica (derecha) -->
+                            <div class="col-span-5">
+                                <!-- Fila 1: Controles -->
+                                <div class="grid grid-cols-5 gap-3 mb-3">
+                                    <button data-action="clear" class="control-btn btn py-4 rounded-xl bg-red-900/30 hover:bg-red-900/40 text-red-300 font-medium">C</button>
+                                    <button data-action="clear-entry" class="control-btn btn py-4 rounded-xl bg-red-900/30 hover:bg-red-900/40 text-red-300 font-medium">CE</button>
+                                    <button data-action="backspace" class="control-btn btn py-4 rounded-xl bg-red-900/30 hover:bg-red-900/40 text-red-300 font-medium">
+                                        <i class="fas fa-backspace"></i>
+                                    </button>
+                                    <button data-operator="divide" class="btn-operator btn py-4 rounded-xl font-medium">÷</button>
+                                    <button data-operator="modulo" class="btn-operator btn py-4 rounded-xl font-medium">%</button>
+                                </div>
+
+                                <!-- Fila 2: Números 7-9 -->
+                                <div class="grid grid-cols-5 gap-3 mb-3">
+                                    <button data-number="7" class="btn-number btn py-4 rounded-xl text-xl">7</button>
+                                    <button data-number="8" class="btn-number btn py-4 rounded-xl text-xl">8</button>
+                                    <button data-number="9" class="btn-number btn py-4 rounded-xl text-xl">9</button>
+                                    <button data-operator="multiply" class="btn-operator btn py-4 rounded-xl font-medium">×</button>
+                                    <button data-func="reciprocal" class="btn-scientific btn py-4 rounded-xl font-medium">1/x</button>
+                                </div>
+
+                                <!-- Fila 3: Números 4-6 -->
+                                <div class="grid grid-cols-5 gap-3 mb-3">
+                                    <button data-number="4" class="btn-number btn py-4 rounded-xl text-xl">4</button>
+                                    <button data-number="5" class="btn-number btn py-4 rounded-xl text-xl">5</button>
+                                    <button data-number="6" class="btn-number btn py-4 rounded-xl text-xl">6</button>
+                                    <button data-operator="subtract" class="btn-operator btn py-4 rounded-xl font-medium">−</button>
+                                    <button data-func="pow2" class="btn-scientific btn py-4 rounded-xl font-medium">x²</button>
+                                </div>
+
+                                <!-- Fila 4: Números 1-3 -->
+                                <div class="grid grid-cols-5 gap-3 mb-3">
+                                    <button data-number="1" class="btn-number btn py-4 rounded-xl text-xl">1</button>
+                                    <button data-number="2" class="btn-number btn py-4 rounded-xl text-xl">2</button>
+                                    <button data-number="3" class="btn-number btn py-4 rounded-xl text-xl">3</button>
+                                    <button data-operator="add" class="btn-operator btn py-4 rounded-xl font-medium">+</button>
+                                    <button data-func="pow3" class="btn-scientific btn py-4 rounded-xl font-medium">x³</button>
+                                </div>
+
+                                <!-- Fila 5: Número 0 y especiales -->
+                                <div class="grid grid-cols-5 gap-3">
+                                    <button data-action="toggle-sign" class="control-btn btn py-4 rounded-xl bg-gray-700 hover:bg-gray-600 font-medium">±</button>
+                                    <button data-number="0" class="btn-number btn py-4 rounded-xl text-xl">0</button>
+                                    <button data-action="decimal" class="control-btn btn py-4 rounded-xl bg-gray-700 hover:bg-gray-600 font-medium">.</button>
+                                    <button data-action="equals" class="btn-operator btn py-4 rounded-xl col-span-2 font-medium text-lg">
+                                        <i class="fas fa-equals mr-2"></i>= 
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modo de ángulo -->
+                        <div class="flex justify-center gap-4 pt-4">
+                            <button data-angle="deg" class="angle-btn px-5 py-2.5 rounded-lg bg-blue-900/30 hover:bg-blue-900/40 text-blue-300 font-medium transition-colors">
+                                <i class="fas fa-degree mr-2"></i>DEG
+                            </button>
+                            <button data-angle="rad" class="angle-btn px-5 py-2.5 rounded-lg bg-blue-900/30 hover:bg-blue-900/40 text-blue-300 font-medium transition-colors">
+                                <i class="fas fa-circle mr-2"></i>RAD
+                            </button>
+                            <button data-angle="grad" class="angle-btn px-5 py-2.5 rounded-lg bg-blue-900/30 hover:bg-blue-900/40 text-blue-300 font-medium transition-colors">
+                                <i class="fas fa-square mr-2"></i>GRAD
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Lateral - Historial e Información -->
+            <div class="lg:w-1/3">
+                <!-- Historial -->
+                <div class="calculator-container rounded-2xl p-6 mb-6">
+                    <div class="flex justify-between items-center mb-5">
+                        <h2 class="text-xl font-bold text-blue-400">
+                            <i class="fas fa-history mr-2"></i>Historial
+                        </h2>
+                        <button id="clear-history" class="text-sm text-gray-400 hover:text-red-400 transition-colors">
+                            <i class="fas fa-trash mr-1"></i>Limpiar
+                        </button>
+                    </div>
+                    <div id="history" class="space-y-3 max-h-72 overflow-y-auto scrollbar-thin pr-2">
+                        <div class="text-gray-400 text-center py-8">
+                            <i class="fas fa-clock text-3xl mb-3"></i>
+                            <p>No hay cálculos recientes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información y Memoria -->
+                <div class="calculator-container rounded-2xl p-6">
+                    <h2 class="text-xl font-bold text-blue-400 mb-5">
+                        <i class="fas fa-info-circle mr-2"></i>Información
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800/50 rounded-xl p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+                                    <i class="fas fa-angle-right text-blue-400"></i>
+                                </div>
+                                <div>
+                                    <div class="text-gray-300">Modo de ángulo</div>
+                                    <div id="current-angle" class="text-lg font-bold text-blue-300">Grados (DEG)</div>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                Las funciones trigonométricas usan este modo para cálculos
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-xl p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                                    <i class="fas fa-function text-purple-400"></i>
+                                </div>
+                                <div>
+                                    <div class="text-gray-300">Memoria</div>
+                                    <div id="memory-value" class="text-lg font-bold text-green-300">0</div>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                Valor almacenado en memoria
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/50 rounded-xl p-4">
+                            <h3 class="font-medium text-gray-300 mb-2">
+                                <i class="fas fa-lightbulb mr-2 text-yellow-400"></i>Consejos
+                            </h3>
+                            <ul class="text-sm text-gray-400 space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-keyboard mr-2 mt-1"></i>
+                                    <span>Usa el teclado para ingresar números y operadores</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-calculator mr-2 mt-1"></i>
+                                    <span>Presiona = o Enter para calcular</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-undo mr-2 mt-1"></i>
+                                    <span>Usa Backspace para corregir errores</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-save mr-2 mt-1"></i>
+                                    <span>La memoria se guarda automáticamente</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-8 md:mt-12 text-center">
+            <div class="text-gray-500 text-sm">
+                <p class="mb-1">Calculadora Científica Pro • Desarrollada con Vite + TypeScript + Tailwind CSS</p>
+                <p>Funciones trigonométricas, logarítmicas, exponenciales, estadísticas y más</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script principal -->
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
