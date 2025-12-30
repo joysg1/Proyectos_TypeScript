@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Oscuro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-calendar-alt"></i> Calendario Minimalista Oscuro</h1>
+        
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <button id="prev-month" class="nav-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <div class="month-display">
+                    <h2 id="current-month">Cargando...</h2>
+                    <div class="today-btn-container">
+                        <button id="today-btn" class="today-btn">
+                            <i class="fas fa-calendar-day"></i> Hoy
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="next-month" class="nav-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <div class="weekdays">
+                <div>Dom</div>
+                <div>Lun</div>
+                <div>Mar</div>
+                <div>Mié</div>
+                <div>Jue</div>
+                <div>Vie</div>
+                <div>Sáb</div>
+            </div>
+            
+            <div id="calendar-grid" class="calendar-grid">
+                <!-- Los días se generarán dinámicamente con TypeScript -->
+            </div>
+            
+            <div class="selected-day-info">
+                <h3>Información del día seleccionado</h3>
+                <p id="selected-date">No hay día seleccionado</p>
+                <div class="event-indicator">
+                    <span class="event-dot"></span>
+                    <span id="event-text">Sin eventos</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Calendario creado con TypeScript <i class="fas fa-code"></i></p>
+            <p class="current-date" id="current-date"></p>
+        </div>
+    </div>
+
+    <!-- Cargar scripts en orden -->
+    <script src="calendario.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
