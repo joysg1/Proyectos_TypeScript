@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .satisfaccion-btn.active {
+    @apply transform scale-105 shadow-lg;
+  }
+  
+  .satisfaccion-btn[data-value="1"].active {
+    @apply bg-red-500;
+  }
+  
+  .satisfaccion-btn[data-value="2"].active {
+    @apply bg-orange-500;
+  }
+  
+  .satisfaccion-btn[data-value="3"].active {
+    @apply bg-yellow-500;
+  }
+  
+  .satisfaccion-btn[data-value="4"].active {
+    @apply bg-lime-500;
+  }
+  
+  .satisfaccion-btn[data-value="5"].active {
+    @apply bg-green-500;
+  }
+}
+
+/* Estilos para el slider personalizado */
+input[type="range"] {
+  @apply appearance-none bg-transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  @apply appearance-none h-6 w-6 rounded-full bg-blue-500 cursor-pointer shadow-lg;
+}
+
+input[type="range"]::-moz-range-thumb {
+  @apply h-6 w-6 rounded-full bg-blue-500 cursor-pointer border-0 shadow-lg;
+}
+
+input[type="range"]::-ms-thumb {
+  @apply h-6 w-6 rounded-full bg-blue-500 cursor-pointer shadow-lg;
+}
+
+/* Animación para la notificación */
+.notification-show {
+  transform: translateY(0);
+}
+
+/* Transiciones suaves */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
